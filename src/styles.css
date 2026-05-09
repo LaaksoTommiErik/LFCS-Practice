@@ -1,0 +1,16 @@
+:root {
+  font-family: Arial, sans-serif;
+  color: #1f2937;
+  background: #f8fafc;
+}
+
+body { margin: 0; }
+.container { max-width: 980px; margin: 0 auto; padding: 1rem; }
+.week-block { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+.task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem; }
+.task-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.75rem; display: flex; flex-direction: column; justify-content: space-between; }
+.task-card h3 { margin-top: 0; font-size: 1rem; }
+.task-card-actions { display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; }
+select, textarea, button { width: 100%; margin: 0.35rem 0 0.75rem; padding: 0.45rem; font: inherit; }
+button { cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 6px; }
+pre { white-space: pre-wrap; background: #0f172a; color: #e2e8f0; padding: 0.75rem; border-radius: 8px; }

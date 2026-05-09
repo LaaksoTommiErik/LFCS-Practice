@@ -1,0 +1,210 @@
+[
+  {
+    "week": 1,
+    "focus": "Environment and Command-Line Foundations",
+    "tasks": [
+      {
+        "id": "w1-t1",
+        "title": "Set up a reproducible LFCS practice environment",
+        "domain": "Essential Commands",
+        "prerequisiteLesson": "LFS207 Chapter 1: Accessing Linux Systems",
+        "achievementCriteria": "Can boot into a Linux VM, create a non-root user, and configure sudo safely.",
+        "endTask": "Provision one VM and document base setup commands used.",
+        "requiredEvidence": "Terminal transcript showing user creation, sudo verification, and hostname check.",
+        "gradingPrompt": "Evaluate whether the learner successfully created and validated a non-root administrative environment for LFCS practice."
+      },
+      {
+        "id": "w1-t2",
+        "title": "Master file navigation and inspection",
+        "domain": "Essential Commands",
+        "prerequisiteLesson": "LFS207 Chapter 2: Navigating Filesystems",
+        "achievementCriteria": "Confidently uses pwd, ls variants, cd, file, stat, and tree alternatives.",
+        "endTask": "Inspect a mixed directory and identify file types and metadata.",
+        "requiredEvidence": "Command output demonstrating at least 8 inspection commands on different targets.",
+        "gradingPrompt": "Assess command fluency and accuracy of filesystem inspection outputs."
+      }
+    ]
+  },
+  {
+    "week": 2,
+    "focus": "Text Processing and Shell Productivity",
+    "tasks": [
+      {
+        "id": "w2-t1",
+        "title": "Filter and transform text streams",
+        "domain": "Essential Commands",
+        "prerequisiteLesson": "LFS207 Chapter 3: Text Processing Tools",
+        "achievementCriteria": "Uses grep, cut, sort, uniq, wc, sed, and awk to answer practical questions.",
+        "endTask": "Extract failed SSH attempts from logs and summarize counts per IP.",
+        "requiredEvidence": "One-liner pipeline plus sample output and explanation.",
+        "gradingPrompt": "Verify that the pipeline logic is correct, efficient, and produces accurate summaries."
+      },
+      {
+        "id": "w2-t2",
+        "title": "Use shell redirection and scripting basics",
+        "domain": "Operation of Running Systems",
+        "prerequisiteLesson": "LFS207 Chapter 4: Shell and Redirection",
+        "achievementCriteria": "Can redirect stdout/stderr, append safely, and automate repetitive tasks with bash scripts.",
+        "endTask": "Write a script that audits disk usage and logs alerts for large directories.",
+        "requiredEvidence": "Script file plus execution output for a sample run.",
+        "gradingPrompt": "Judge script clarity, redirection correctness, and reliability of produced output."
+      }
+    ]
+  },
+  {
+    "week": 3,
+    "focus": "Users, Groups, and Permissions",
+    "tasks": [
+      {
+        "id": "w3-t1",
+        "title": "Administer users and groups",
+        "domain": "User and Group Management",
+        "prerequisiteLesson": "LFS207 Chapter 5: Accounts",
+        "achievementCriteria": "Creates, modifies, and locks user accounts and groups with correct defaults.",
+        "endTask": "Create role-based accounts for ops, dev, and audit teams.",
+        "requiredEvidence": "Commands and /etc/passwd, /etc/group excerpts proving state.",
+        "gradingPrompt": "Determine if user/group administration meets policy and least-privilege expectations."
+      },
+      {
+        "id": "w3-t2",
+        "title": "Apply Linux permissions and ACLs",
+        "domain": "User and Group Management",
+        "prerequisiteLesson": "LFS207 Chapter 6: Ownership and Permissions",
+        "achievementCriteria": "Correctly sets ownership, mode bits, special permissions, and ACL entries.",
+        "endTask": "Implement collaborative directory permissions for a project team.",
+        "requiredEvidence": "before/after ls -l and getfacl output with rationale.",
+        "gradingPrompt": "Evaluate permission model correctness and whether access goals are met without overexposure."
+      }
+    ]
+  },
+  {
+    "week": 4,
+    "focus": "Process and Service Management",
+    "tasks": [
+      {
+        "id": "w4-t1",
+        "title": "Control processes and jobs",
+        "domain": "Operation of Running Systems",
+        "prerequisiteLesson": "LFS207 Chapter 7: Process Management",
+        "achievementCriteria": "Tracks, prioritizes, and terminates processes safely using ps, top, kill, nice, and renice.",
+        "endTask": "Diagnose and remediate one high-CPU process scenario.",
+        "requiredEvidence": "Process snapshots and commands executed with outcome notes.",
+        "gradingPrompt": "Check whether process diagnosis and remediation actions are technically sound."
+      },
+      {
+        "id": "w4-t2",
+        "title": "Manage systemd services and logs",
+        "domain": "Operation of Running Systems",
+        "prerequisiteLesson": "LFS207 Chapter 8: Boot and Services",
+        "achievementCriteria": "Starts, enables, troubleshoots, and validates services using systemctl and journalctl.",
+        "endTask": "Deploy a sample service unit and verify startup behavior.",
+        "requiredEvidence": "Unit file, systemctl status output, and journal excerpts.",
+        "gradingPrompt": "Assess service unit validity, startup behavior, and troubleshooting quality."
+      }
+    ]
+  },
+  {
+    "week": 5,
+    "focus": "Networking Fundamentals",
+    "tasks": [
+      {
+        "id": "w5-t1",
+        "title": "Configure interfaces and hostname resolution",
+        "domain": "Networking",
+        "prerequisiteLesson": "LFS207 Chapter 9: Network Configuration",
+        "achievementCriteria": "Can configure static or DHCP interfaces and verify DNS resolution.",
+        "endTask": "Configure one static interface and validate connectivity and name lookup.",
+        "requiredEvidence": "ip addr/ip route output, resolver config, and ping/dig results.",
+        "gradingPrompt": "Evaluate network configuration correctness and validation evidence completeness."
+      },
+      {
+        "id": "w5-t2",
+        "title": "Harden access with SSH settings and firewall basics",
+        "domain": "Networking",
+        "prerequisiteLesson": "LFS207 Chapter 10: Secure Remote Access",
+        "achievementCriteria": "Adjusts sshd_config and permits only required ports/services through firewall tools.",
+        "endTask": "Restrict SSH auth method and enforce a minimal ingress rule set.",
+        "requiredEvidence": "Configuration diff plus firewall rule listing and connection test results.",
+        "gradingPrompt": "Check security posture improvements and verify that required access remains functional."
+      }
+    ]
+  },
+  {
+    "week": 6,
+    "focus": "Storage and Filesystems",
+    "tasks": [
+      {
+        "id": "w6-t1",
+        "title": "Partition disks and manage filesystems",
+        "domain": "Storage Management",
+        "prerequisiteLesson": "LFS207 Chapter 11: Partitions and Filesystems",
+        "achievementCriteria": "Creates partitions, formats filesystems, and mounts persistently with /etc/fstab.",
+        "endTask": "Add a new data volume mounted at boot.",
+        "requiredEvidence": "fdisk/lsblk output, mkfs command, fstab entry, and mount verification.",
+        "gradingPrompt": "Judge whether storage changes are safe, persistent, and correctly validated."
+      },
+      {
+        "id": "w6-t2",
+        "title": "Set up LVM and swap",
+        "domain": "Storage Management",
+        "prerequisiteLesson": "LFS207 Chapter 12: LVM Basics",
+        "achievementCriteria": "Creates PV/VG/LV, extends logical volumes, and configures swap space.",
+        "endTask": "Create an LVM-backed mount and expand it without downtime.",
+        "requiredEvidence": "pvs/vgs/lvs snapshots before and after expansion, plus swapon output.",
+        "gradingPrompt": "Assess correctness of LVM lifecycle actions and operational safety during expansion."
+      }
+    ]
+  },
+  {
+    "week": 7,
+    "focus": "Security and Automation",
+    "tasks": [
+      {
+        "id": "w7-t1",
+        "title": "Schedule maintenance and verification jobs",
+        "domain": "Operation of Running Systems",
+        "prerequisiteLesson": "LFS207 Chapter 13: Cron and Timers",
+        "achievementCriteria": "Creates reliable cron/systemd timer jobs and validates execution.",
+        "endTask": "Schedule nightly backup verification and capture execution logs.",
+        "requiredEvidence": "crontab or timer unit plus log evidence from at least one run.",
+        "gradingPrompt": "Evaluate scheduling correctness, observability, and practical reliability."
+      },
+      {
+        "id": "w7-t2",
+        "title": "Apply baseline hardening practices",
+        "domain": "Operation of Running Systems",
+        "prerequisiteLesson": "LFS207 Chapter 14: Security Fundamentals",
+        "achievementCriteria": "Implements updates, auditing basics, and least-privilege checks.",
+        "endTask": "Run a baseline hardening checklist on the practice VM.",
+        "requiredEvidence": "Checklist results with command output for each completed control.",
+        "gradingPrompt": "Determine whether hardening actions are meaningful, complete, and verifiable."
+      }
+    ]
+  },
+  {
+    "week": 8,
+    "focus": "Final Review and Mock Exam",
+    "tasks": [
+      {
+        "id": "w8-t1",
+        "title": "Run an LFCS-style timed lab",
+        "domain": "Comprehensive Review",
+        "prerequisiteLesson": "All prior LFS207 modules",
+        "achievementCriteria": "Completes representative objectives under time pressure with minimal reference checks.",
+        "endTask": "Perform a 2-hour mock exam covering commands, services, networking, and storage.",
+        "requiredEvidence": "Task checklist with timestamps and final system validation outputs.",
+        "gradingPrompt": "Assess readiness based on completion rate, correctness, and troubleshooting approach under constraints."
+      },
+      {
+        "id": "w8-t2",
+        "title": "Perform gap analysis and remediation plan",
+        "domain": "Comprehensive Review",
+        "prerequisiteLesson": "Completion of mock exam",
+        "achievementCriteria": "Identifies weak domains and assigns concrete remediation tasks for next cycle.",
+        "endTask": "Produce a one-week remediation plan prioritized by impact.",
+        "requiredEvidence": "Summary report with weak areas, root causes, and targeted follow-up actions.",
+        "gradingPrompt": "Evaluate whether the remediation plan is specific, prioritized, and realistically actionable."
+      }
+    ]
+  }
+]

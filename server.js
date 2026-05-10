@@ -17,6 +17,7 @@ import {
   upsertProgress,
   loadProgress,
   verifyPassword,
+  checkDatabase,
 } from './src/server/db.js'
 
 dotenv.config()
@@ -104,6 +105,39 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')))
   app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')))
 }
+
+app.get('/healthz', (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    service: 'lfcs-study-dashboard',
+    status: 'healthy',
+  })
+})
+
+app.get('/readyz', (_req, res) => {
+  try {
+    checkDatabase()
+
+    res.status(200).json({
+      ok: true,
+      service: 'lfcs-study-dashboard',
+      status: 'ready',
+      checks: {
+        database: 'ok',
+      },
+    })
+  } catch (error) {
+    res.status(503).json({
+      ok: false,
+      service: 'lfcs-study-dashboard',
+      status: 'not ready',
+      checks: {
+        database: 'failed',
+      },
+      error: error.message,
+    })
+  }
+})
 
 const port = Number(process.env.PORT || 3000)
 app.listen(port, () => console.log(`Server listening on ${port}`))

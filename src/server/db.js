@@ -52,6 +52,7 @@ export function loadProgress(userId) {
   }, {})
 }
 
+
 export function upsertProgress(userId, { taskId, status, evidence }) {
   db.prepare(`
     INSERT INTO progress (user_id, task_id, status, evidence, updated_at)
@@ -59,4 +60,8 @@ export function upsertProgress(userId, { taskId, status, evidence }) {
     ON CONFLICT(user_id, task_id)
     DO UPDATE SET status=excluded.status, evidence=excluded.evidence, updated_at=CURRENT_TIMESTAMP
   `).run(userId, taskId, status, evidence || '')
+}
+
+export function checkDatabase() {
+  return db.prepare('SELECT 1 AS ok').get()
 }

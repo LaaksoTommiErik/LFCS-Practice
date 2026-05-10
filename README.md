@@ -1,38 +1,48 @@
-# lfcs-study-dashboard
+# LFCS Practice Dashboard
 
-A local-first React + Vite dashboard for LFCS/LFS207 study tracking.
+LFCS prep dashboard with authenticated progress persistence.
 
 ## Features
+- Email/password login (no public registration).
+- Server-side sessions (`express-session`) with SQLite-backed session store.
+- Session cookie settings: `HttpOnly`, `Secure` in production, `SameSite=Lax`.
+- Password hashing with Argon2id.
+- Per-user progress persistence in SQLite.
+- CSRF protection (`csurf`) and login rate limiting.
+- Security headers via Helmet.
+- Health endpoint: `GET /health`.
 
-- Static 8-week LFCS roadmap from JSON data.
-- Week-based task blocks.
-- Task status tracking (`not started`, `in progress`, `passed`, `failed`).
-- Local persistence in `localStorage`.
-- Task detail page with full requirements.
-- Copy button for a strict ChatGPT grading prompt including the user's evidence.
-
-## Run locally
-
-1. Install dependencies:
+## Setup
+1. Copy env:
+   ```bash
+   cp .env.example .env
+   ```
+2. Install dependencies:
    ```bash
    npm install
    ```
-2. Start dev server:
+3. Create admin user:
+   ```bash
+   npm run create-admin-user
+   ```
+4. Run in development:
    ```bash
    npm run dev
    ```
-3. Open the URL shown by Vite (usually `http://localhost:5173`).
 
-## Build for production
+## Auth Routes
+- `GET /api/csrf-token`
+- `POST /api/login`
+- `POST /api/logout`
+- `GET /api/current-user`
 
-```bash
-npm run build
-npm run preview
-```
+## Progress Routes (auth required)
+- `GET /api/progress`
+- `POST /api/progress`
 
-## Project structure
-
-- `src/data/roadmap.json` – static 8-week study roadmap.
-- `src/pages/DashboardPage.jsx` – overview page by week.
-- `src/pages/TaskDetailPage.jsx` – task detail + evidence + prompt copy flow.
-- `src/lib.js` – localStorage helpers and prompt builder.
+## Deployment Notes (AWS Lightsail + Nginx)
+- Use HTTPS at Nginx and forward to Node app.
+- Set `NODE_ENV=production` and strong `SESSION_SECRET`.
+- Keep `APP_ORIGIN` set to your HTTPS app URL.
+- Run `npm run build` and `npm run start`.
+- Persist `./data` directory (SQLite DB + session DB) on durable disk.

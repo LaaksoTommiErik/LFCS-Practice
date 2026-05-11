@@ -10,6 +10,7 @@ import dotenv from 'dotenv'
 import { z } from 'zod'
 import path from 'node:path'
 import fs from 'fs'
+import { randomUUID  } from 'crypto'
 import { fileURLToPath } from 'node:url'
 import {
   getUserByEmail,
@@ -28,6 +29,42 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const distPath = path.join(__dirname, 'dist')
 const app = express()
+
+app.set('trust proxy', true)
+
+app.use((req, res, next) => {
+  const startedAt = process.hrtime.bigint()
+  const requestId = req.headers['x-request-id'] || randomUUID()
+
+  res.setHeader('X-Request-Id', requestId)
+
+  res.on('finish', () => {
+    const durationMs = Number(process.hrtime.bigint() - startedAt) / 1_000_000
+
+    const logEntry = {
+      ts: new Date().toISOString(),
+      level:
+        res.statusCode >= 500
+          ? 'error'
+          : res.statusCode >= 400
+            ? 'warn'
+            : 'info',
+      event: 'http_request',
+      request_id: requestId,
+      method: req.method,
+      path: req.originalUrl || req.url,
+      status: res.statusCode,
+      duration_ms: Number(durationMs.toFixed(2)),
+      ip: req.ip,
+      user_agent: req.get('user-agent') || '',
+    }
+
+    console.log(JSON.stringify(logEntry))
+  })
+
+  next()
+})
+
 const SQLiteStore = SQLiteStoreFactory(session)
 
 app.set('trust proxy', 1)

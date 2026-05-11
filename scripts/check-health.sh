@@ -20,10 +20,16 @@ check_endpoint() {
   local path="$2"
   local tmp_file
   local status
+  local status_file
 
   tmp_file="$(mktemp)"
+  status_file="$(mktemp)"
 
-  status="$(curl -sS -o "$tmp_file" -w "%{http_code}" "$BASE_URL$path" || echo "000")"
+  if curl -sS -o "$tmp_file" -w "%{http_code}" "$BASE_URL$path" >"$status_file"; then
+    status="$(cat "$status_file")"
+  else
+    status="000"
+  fi
 
   echo
   echo "=== $label ==="
@@ -37,7 +43,7 @@ check_endpoint() {
     echo "(empty response)"
   fi
 
-  rm -f "$tmp_file"
+  rm -f "$tmp_file" "$status_file"
 
   if [ "$status" != "200" ]; then
     echo

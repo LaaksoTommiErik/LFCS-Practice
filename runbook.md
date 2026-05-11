@@ -151,3 +151,10 @@ sudo systemctl status lfcs-dashboard
 Logs:
 
 sudo journalctl -u lfcs-dashboard -n 50 --no-pager
+
+### Verify target health
+
+Classic targets UI:
+
+```text
+http://127.0.0.1:9090/classic/targets

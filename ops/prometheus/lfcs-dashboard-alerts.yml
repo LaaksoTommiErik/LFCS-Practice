@@ -1,0 +1,29 @@
+groups:
+  - name: lfcs-dashboard.alerts
+    rules:
+      - alert: LFCSDashboardDown
+        expr: up{job="lfcs-dashboard"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "LFCS Dashboard is down"
+          description: "Prometheus cannot scrape the LFCS Dashboard target."
+
+      - alert: LFCSDashboardHighErrorRatio
+        expr: lfcs_dashboard:http_error_ratio:5m > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP 5xx error ratio"
+          description: "5xx error ratio is above 5% for 5 minutes."
+
+      - alert: LFCSDashboardHighLatencyP95
+        expr: lfcs_dashboard:http_request_duration_seconds:p95_5m > 0.3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High p95 HTTP latency"
+          description: "p95 latency is above 300ms for 5 minutes."

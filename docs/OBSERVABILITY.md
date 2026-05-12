@@ -16,7 +16,7 @@ Grafana runs locally on:
 ```text
 http://127.0.0.1:3001
 
-Dashboard name: LFCS Dashboard Observability
+## Dashboard name: LFCS Dashboard Observability
 
 Main panels:
 
@@ -38,3 +38,9 @@ A repository copy of the Grafana dashboard JSON is stored at:
 
 ops/grafana/lfcs-dashboard-observability.json
 
+## Prometheus Alert Rules
+
+The project includes a small set of Prometheys alert rules in:
+
+```text
+ops/promehtheus/lfcs-dashboard-alers.yml

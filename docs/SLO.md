@@ -1,4 +1,4 @@
-# Service Level Objectives
+# Updated service Level Objectives
 
 This document defines basic Service Level Objectives for the LFCS Study Dashboard.
 
@@ -21,6 +21,12 @@ A 5xx response means the server failed to handle the request correctly. Client-s
 The availability SLI is the ratio of successful non-5xx requests to total non-`/metrics` requests.
 
 ```promql
+histogram_quantile(
+  0.95,
+  sum by (le) (
+    rate(lfcs_dashboard_http_request_duration_seconds_bucket{route!="/metrics"}[5m])
+  )
+)
 1 - (
   sum(rate(lfcs_dashboard_http_requests_total{status_code=~"5..",route!="/metrics"}[5m]))
   /

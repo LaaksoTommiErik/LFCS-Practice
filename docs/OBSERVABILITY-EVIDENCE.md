@@ -1,14 +1,11 @@
-docs/clean-slo-and-evidence-docs
-
-
 # LFCS Study Dashboard — Observability Evidence
 
 This document collects operational evidence for the LFCS Study Dashboard portfolio project.
-=======
-# LFCS Study Dashboard — Observability Evidence
 
-This document collects the operational evidence for the LFCS Study Dashboard portfolio project.
-docs/clean-slo-and-evidence-docs
+The purpose is to show that this project is not only a web application, but an operated Linux service with deployment, health checks, structured logs, metrics, dashboards, SLOs, alerts, and incident-response documentation.
+
+## Service Summary
+
 | Field | Value |
 |---|---|
 | Project | LFCS Study Dashboard |
@@ -21,13 +18,6 @@ docs/clean-slo-and-evidence-docs
 | Metrics | Prometheus |
 | Dashboarding | Grafana |
 | Operational focus | health checks, readiness checks, structured logs, metrics, dashboards, SLOs, alerts, incident notes |
-=======
-**Project:** LFCS Study Dashboard  
-**Purpose:** Personal Linux / LFCS study tracking dashboard  
-**Architecture:** Vite + React frontend, Express / Node backend, SQLite persistence  
-**Deployment target:** Ubuntu VM, systemd service, Nginx reverse proxy  
-**Operational focus:** health checks, readiness checks, structured logs, Prometheus metrics, Grafana dashboards, SLOs, alerting, runbooks, incident notes
-
 
 ## Current Operational Capabilities
 
@@ -41,11 +31,35 @@ docs/clean-slo-and-evidence-docs
 | Password hashing | Argon2id password hashing | Implemented |
 | Admin bootstrap | Scripted admin user creation | Implemented |
 | Health endpoint | `/healthz` returns process-level health | Implemented |
-main
+| Readiness endpoint | `/readyz` verifies SQLite readiness | Implemented |
 | Production serving | Express serves built React frontend from `dist` | Implemented |
 | Linux service management | systemd service on Ubuntu VM | Implemented |
 | Reverse proxy | Nginx proxies HTTP traffic to Express | Implemented |
 | Structured logging | JSON request logs emitted to stdout / journald | Implemented |
+| Metrics endpoint | Prometheus `/metrics` endpoint | Implemented |
+| Prometheus target | Prometheus scrapes the dashboard target | Implemented |
+| Recording rules | Prometheus recording rules for request rate, errors, latency, memory, heap, and CPU | Implemented |
+| Grafana dashboard | Dashboard JSON exported to repository | Implemented |
+| SLOs | Service-level objectives documented | Implemented |
+| Alerts | Prometheus alert rules documented | Implemented |
+| AWS deployment | Cloud deployment evidence | Planned |
+| Terraform | Infrastructure-as-code evidence | Planned |
+
+## Evidence File Locations
+
+| Evidence type | Location |
+|---|---|
+| Observability overview | `docs/OBSERVABILITY.md` |
+| SLO documentation | `docs/SLO.md` |
+| Prometheus recording rules | `ops/prometheus/lfcs-dashboard-rules.yml` |
+| Prometheus alert rules | `ops/prometheus/lfcs-dashboard-alerts.yml` |
+| Grafana dashboard JSON | `ops/grafana/lfcs-dashboard-observability.json` |
+| Screenshot evidence | `docs/evidence/screenshots/` |
+| Runbook | `RUNBOOK.md` or `runbook.md` |
+
+## Portfolio Screenshot Checklist
+
+The following screenshots should be collected as the project matures. Items should only be checked after the relevant feature has been implemented and verified.
 
 - [x] `/healthz` response
 - [x] `/readyz` response

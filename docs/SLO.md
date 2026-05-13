@@ -16,7 +16,7 @@ The `/metrics` endpoint is excluded from request-based SLOs because it is scrape
 
 A 5xx response means the server failed to handle the request correctly. Client-side errors such as 404 or 401 are not counted as availability failures here because the service still responded correctly from the server's perspective.
 
-cat > docs/SLO.md <<'EOF'
+docs/SLO.md
 # Service Level Objectives
 
 This document defines the initial Service Level Objectives for the LFCS Study Dashboard.

@@ -1,3 +1,4 @@
+#cat > docs/BASELINE-AUDIT.md <<'EOF'
 # LFCS Study Dashboard — Baseline Audit
 
 This document records the current project state before adding Docker, AWS, Terraform, Kubernetes, or expanded observability.
@@ -32,13 +33,12 @@ This document records the current project state before adding Docker, AWS, Terra
 
 | Weakness | Impact | Fix |
 |---|---|---|
-| README does not fully explain operational value | Employers may miss DevOps/SRE relevance | Rewrite README around architecture, operations, and evidence |
-| Duplicate runbook files | Confusing documentation structure | Consolidate into `RUNBOOK.md` |
-| Evidence documentation needs cleanup | Portfolio evidence looks unfinished | Rewrite `docs/OBSERVABILITY-EVIDENCE.md` cleanly |
-| SLO documentation needs cleanup | SLOs look pasted rather than authored | Rewrite `docs/SLO.md` cleanly |
-| Missing architecture document | Hard to understand system quickly | Add `docs/ARCHITECTURE.md` |
-| Missing incident notes | Less SRE-like portfolio | Add incident notes after real bugs/outages |
-| No Docker/AWS/Terraform/Kubernetes yet | Acceptable for current phase | Add only after baseline is clean |
+| Documentation quality needs review | Employers may miss the operational value | Keep README, architecture, runbook, SLOs, and evidence docs clean |
+| Incident documentation is not yet complete | Less SRE-like evidence | Add incident notes under `docs/incidents/` |
+| Docker is not yet added | Future packaging gap | Add after baseline is clean |
+| AWS is not yet added | Future cloud deployment gap | Add after Docker or direct VM deployment plan |
+| Terraform is not yet added | Future infrastructure-as-code gap | Add after AWS baseline |
+| Kubernetes is not yet added | Future orchestration gap | Add after Docker and AWS fundamentals |
 
 ## Phase 1 Exit Criteria
 
@@ -46,7 +46,8 @@ This phase is complete when:
 
 - README explains the project as an operated Linux service.
 - Architecture diagram is present.
-- Runbook is canonical and not duplicated.
+- Runbook is canonical and readable.
 - Observability evidence document is clean and complete.
 - SLO document has no pasted shell commands or broken Markdown.
 - GitHub `main` branch renders documentation cleanly.
+EOF

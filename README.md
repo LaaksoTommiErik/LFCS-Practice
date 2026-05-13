@@ -9,6 +9,8 @@ This project is both:
 1. A personal LFCS study dashboard.
 2. A portfolio artifact showing practical DevOps / Observability / SRE skills.
 
+The goal is to demonstrate that the application is not only built, but also operated, verified, monitored, documented, and prepared for future cloud deployment.
+
 ## Current Architecture
 
 See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
@@ -37,37 +39,126 @@ See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ## Technology Stack
 
-- Frontend: React, Vite
-- Backend: Node.js, Express
-- Database: SQLite, better-sqlite3
-- Authentication: express-session, SQLite session store, CSRF protection
-- Security: Helmet, rate limiting, Argon2id password hashing
-- Operations: Ubuntu, systemd, Nginx
-- Observability: structured logs, Prometheus, Grafana, SLOs, alert rules
+| Layer | Technology |
+|---|---|
+| Frontend | React, Vite |
+| Backend | Node.js, Express |
+| Database | SQLite, better-sqlite3 |
+| Authentication | express-session, SQLite session store, CSRF protection |
+| Security | Helmet, rate limiting, Argon2id password hashing |
+| Linux operations | Ubuntu, systemd, Nginx |
+| Observability | structured logs, Prometheus, Grafana, SLOs, alert rules |
 
 ## Local Development
 
-bash
+```bash
 cp .env.example .env
 npm install
 npm run create-admin-user
 npm run dev
 ```
-```
-### Production-Style Local Run
 
+## Production-Style Local Run
+
+```bash
 npm install
 npm run build
 npm start
+```
 
-### Operational Endpoints
+## Operational Endpoints
 
-Endpoint	        Purpose
-/healthz	        Process-level health check
-/readyz	            Readiness check including SQLite
-/metrics	        Prometheus metrics
-/api/csrf-token	    CSRF token
-/api/login	        Login
-/api/logout	        Logout
-/api/current-user	Current authenticated user
-/api/progress	    User progress persistence
+| Endpoint | Purpose |
+|---|---|
+| `/healthz` | Process-level health check |
+| `/readyz` | Readiness check including SQLite |
+| `/metrics` | Prometheus metrics |
+| `/api/csrf-token` | CSRF token |
+| `/api/login` | Login |
+| `/api/logout` | Logout |
+| `/api/current-user` | Current authenticated user |
+| `/api/progress` | User progress persistence |
+
+## Verification
+
+When running directly on Express:
+
+```bash
+curl http://127.0.0.1:3000/healthz
+curl http://127.0.0.1:3000/readyz
+curl http://127.0.0.1:3000/metrics | head
+```
+
+When running behind Nginx:
+
+```bash
+curl http://127.0.0.1/healthz
+curl http://127.0.0.1/readyz
+```
+
+Expected `/healthz` result:
+
+```json
+{
+  "ok": true,
+  "service": "lfcs-study-dashboard",
+  "status": "healthy"
+}
+```
+
+Expected `/readyz` result:
+
+```json
+{
+  "ok": true,
+  "service": "lfcs-study-dashboard",
+  "status": "ready",
+  "checks": {
+    "database": "ok"
+  }
+}
+```
+
+## Documentation
+
+| Document | Purpose |
+|---|---|
+| [Architecture](docs/ARCHITECTURE.md) | Current system architecture |
+| [Baseline Audit](docs/BASELINE-AUDIT.md) | Current project state before Docker, AWS, Terraform, and Kubernetes |
+| [Runbook](RUNBOOK.md) | Operational commands and deployment notes |
+| [SLOs](docs/SLO.md) | Service Level Objectives and SLIs |
+| [Observability Evidence](docs/OBSERVABILITY-EVIDENCE.md) | Portfolio evidence checklist |
+
+## Portfolio Evidence
+
+See: [docs/OBSERVABILITY-EVIDENCE.md](docs/OBSERVABILITY-EVIDENCE.md)
+
+Evidence currently focuses on:
+
+- health checks
+- readiness checks
+- systemd service status
+- Nginx reverse proxy
+- structured JSON logs
+- Prometheus metrics
+- Grafana dashboards
+- SLO and alert documentation
+
+## Roadmap
+
+Current phase:
+
+- clean baseline documentation
+- make current architecture explainable
+- repair observability and SLO documentation
+- consolidate runbook documentation
+
+Future phases:
+
+- Docker
+- AWS deployment
+- Terraform
+- Kubernetes
+- expanded observability
+- incident response documentation
+EOF

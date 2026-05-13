@@ -40,6 +40,7 @@ The `/metrics` endpoint is excluded from request-based SLOs because it is scrape
   sum(rate(lfcs_dashboard_http_requests_total{route!="/metrics"}[5m]))
 )
 ```
+
 ## Error Ratio SLI
 
 ```promql
@@ -64,3 +65,15 @@ histogram_quantile(
 ```promql
 up{job="lfcs-dashboard"} == 1
 ```
+
+## Alert Relationship
+
+| Alert | Related SLO |
+|---|---|
+| `LFCSDashboardDown` | Availability / readiness |
+| `LFCSDashboardHighErrorRatio` | Error ratio |
+| `LFCSDashboardHighLatencyP95` | Latency |
+
+## Notes
+
+These are intentionally simple beginner SLOs. They are suitable for a single-user portfolio service and can be made stricter after AWS deployment and synthetic checks are added.

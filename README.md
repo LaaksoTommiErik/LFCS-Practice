@@ -1,48 +1,73 @@
-# LFCS Practice Dashboard
+# LFCS Study Dashboard
 
-LFCS prep dashboard with authenticated progress persistence.
+A Linux / SRE / DevOps portfolio project for tracking LFCS study progress while practicing real operational engineering: authentication, persistence, health checks, readiness checks, structured logs, metrics, dashboards, SLOs, alerting, and Linux service deployment.
 
-## Features
-- Email/password login (no public registration).
-- Server-side sessions (`express-session`) with SQLite-backed session store.
-- Session cookie settings: `HttpOnly`, `Secure` in production, `SameSite=Lax`.
-- Password hashing with Argon2id.
-- Per-user progress persistence in SQLite.
-- CSRF protection (`csurf`) and login rate limiting.
-- Security headers via Helmet.
-- Health endpoint: `GET /health`.
+## Project Purpose
 
-## Setup
-1. Copy env:
-   ```bash
-   cp .env.example .env
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create admin user:
-   ```bash
-   npm run create-admin-user
-   ```
-4. Run in development:
-   ```bash
-   npm run dev
-   ```
+This project is both:
 
-## Auth Routes
-- `GET /api/csrf-token`
-- `POST /api/login`
-- `POST /api/logout`
-- `GET /api/current-user`
+1. A personal LFCS study dashboard.
+2. A portfolio artifact showing practical DevOps / Observability / SRE skills.
 
-## Progress Routes (auth required)
-- `GET /api/progress`
-- `POST /api/progress`
+## Current Architecture
 
-## Deployment Notes (AWS Lightsail + Nginx)
-- Use HTTPS at Nginx and forward to Node app.
-- Set `NODE_ENV=production` and strong `SESSION_SECRET`.
-- Keep `APP_ORIGIN` set to your HTTPS app URL.
-- Run `npm run build` and `npm run start`.
-- Persist `./data` directory (SQLite DB + session DB) on durable disk.
+See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+## Current Capabilities
+
+| Area | Status |
+|---|---|
+| React / Vite frontend | Implemented |
+| Express / Node backend | Implemented |
+| SQLite persistence | Implemented |
+| Session authentication | Implemented |
+| CSRF protection | Implemented |
+| Argon2id password hashing | Implemented |
+| Admin bootstrap script | Implemented |
+| `/healthz` health endpoint | Implemented |
+| `/readyz` readiness endpoint | Implemented |
+| Production frontend serving from Express | Implemented |
+| Ubuntu systemd deployment | Implemented |
+| Nginx reverse proxy | Implemented |
+| Structured JSON logs | Implemented |
+| Prometheus `/metrics` endpoint | Implemented |
+| Grafana dashboarding | Started |
+| SLO documentation | Started |
+| Prometheus alert rules | Started |
+
+## Technology Stack
+
+- Frontend: React, Vite
+- Backend: Node.js, Express
+- Database: SQLite, better-sqlite3
+- Authentication: express-session, SQLite session store, CSRF protection
+- Security: Helmet, rate limiting, Argon2id password hashing
+- Operations: Ubuntu, systemd, Nginx
+- Observability: structured logs, Prometheus, Grafana, SLOs, alert rules
+
+## Local Development
+
+bash
+cp .env.example .env
+npm install
+npm run create-admin-user
+npm run dev
+```
+```
+### Production-Style Local Run
+
+npm install
+npm run build
+npm start
+
+### Operational Endpoints
+
+Endpoint	        Purpose
+/healthz	        Process-level health check
+/readyz	            Readiness check including SQLite
+/metrics	        Prometheus metrics
+/api/csrf-token	    CSRF token
+/api/login	        Login
+/api/logout	        Logout
+/api/current-user	Current authenticated user
+/api/progress	    User progress persistence

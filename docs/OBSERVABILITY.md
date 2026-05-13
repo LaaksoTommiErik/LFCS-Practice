@@ -43,4 +43,4 @@ ops/grafana/lfcs-dashboard-observability.json
 The project includes a small set of Prometheys alert rules in:
 
 ```text
-ops/promehtheus/lfcs-dashboard-alers.yml
+ops/prometheus/lfcs-dashboard-alerts.yml

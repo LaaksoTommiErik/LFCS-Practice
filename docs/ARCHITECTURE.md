@@ -83,4 +83,3 @@ Out of scope for this baseline phase:
 - Kubernetes
 - multi-node deployment
 - managed databases
-EOF

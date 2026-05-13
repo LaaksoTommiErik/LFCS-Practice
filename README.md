@@ -161,4 +161,3 @@ Future phases:
 - Kubernetes
 - expanded observability
 - incident response documentation
-EOF

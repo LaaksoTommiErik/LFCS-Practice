@@ -1,4 +1,3 @@
-#cat > docs/BASELINE-AUDIT.md <<'EOF'
 # LFCS Study Dashboard — Baseline Audit
 
 This document records the current project state before adding Docker, AWS, Terraform, Kubernetes, or expanded observability.
@@ -50,4 +49,3 @@ This phase is complete when:
 - Observability evidence document is clean and complete.
 - SLO document has no pasted shell commands or broken Markdown.
 - GitHub `main` branch renders documentation cleanly.
-EOF

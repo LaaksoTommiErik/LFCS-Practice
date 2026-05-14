@@ -1,0 +1,15 @@
+.detail-page { display:grid; gap:1rem; }
+.back-link { font-weight:600; width:fit-content; }
+.detail-hero { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+.detail-hero h1 { margin:.35rem 0; }
+.detail-grid { display:grid; grid-template-columns:2fr 1fr; gap:1rem; }
+.detail-list { margin:0; display:grid; gap:.8rem; }
+.detail-list dt { font-weight:700; margin-bottom:.15rem; }
+.detail-list dd { margin:0; color:#334155; }
+.evidence-panel textarea { min-height:190px; }
+.evidence-count { margin:0; color:#64748b; font-size:.9rem; }
+.helper-text { color:#475569; margin:.25rem 0; }
+.success-text { color:#15803d; font-weight:700; margin-left:.5rem; }
+@media (max-width: 900px) {
+  .detail-grid { grid-template-columns:1fr; }
+}

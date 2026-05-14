@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "start": "node server.js",
     "create-admin-user": "node scripts/create-admin-user.js",
-    "db:inspect": "node scripts/db-inspect.cjs"
+    "db:inspect": "node scripts/db-inspect.cjs",
+    "smoke": "bash scripts/smoke-test.sh",
+    "smoke:local": "bash scripts/smoke-test.sh http://127.0.0.1:3000",
+    "verify:build": "npm run build"
   },
   "dependencies": {
     "argon2": "^0.41.1",

@@ -59,7 +59,23 @@ export default function App() {
 
   return (
     <main className="container">
-      <p>Signed in as {user.email} ({user.role}) <button onClick={async () => { await authApi.logout(); setUser(null) }}>Logout</button></p>
+      <header className="topbar">
+        <div className="brand-wrap">
+          <div className="brand">LFCS Study Dashboard</div>
+          <nav className="main-nav">
+            <a href="/">Dashboard</a>
+            <a href="/me">Account</a>
+            <a href="/healthz" target="_blank" rel="noreferrer">Health</a>
+            <a href="/readyz" target="_blank" rel="noreferrer">Readiness</a>
+            <a href="/metrics" target="_blank" rel="noreferrer">Metrics</a>
+          </nav>
+        </div>
+        <div className="userbar">
+          <span>{user.email}</span>
+          <span>{user.role}</span>
+          <button onClick={async () => { await authApi.logout(); setUser(null) }}>Logout</button>
+        </div>
+      </header>
       <Routes>
         <Route path="/" element={<DashboardPage roadmap={roadmap} progress={progress} onStatusChange={(id, status) => updateProgress(id, { status })} />} />
         <Route path="/task/:taskId" element={<TaskDetailPage tasksById={tasksById} progress={progress} onStatusChange={(id, status) => updateProgress(id, { status })} onEvidenceChange={(id, evidence) => updateProgress(id, { evidence })} />} />

@@ -119,6 +119,17 @@ Expected `/readyz` result:
 }
 ```
 
+
+## Frontend Polish
+
+The frontend includes:
+- top navigation
+- dashboard summary with progress score
+- status badges and operational links
+- task detail panels with evidence capture
+- strict grading prompt copy/preview workflow
+- responsive layout for dashboard and detail views
+
 ## Documentation
 
 | Document | Purpose |

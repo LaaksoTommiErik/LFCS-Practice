@@ -7,6 +7,9 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3000',
       '/health': 'http://localhost:3000',
+      '/healthz': 'http://localhost:3000',
+      '/readyz': 'http://localhost:3000',
+      '/metrics': 'http://localhost:3000',
     },
   },
 })

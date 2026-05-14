@@ -36,6 +36,7 @@ See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 | Grafana dashboarding | Started |
 | SLO documentation | Started |
 | Prometheus alert rules | Started |
+| Local quality gates | Started |
 
 ## Technology Stack
 
@@ -120,6 +121,17 @@ Expected `/readyz` result:
 ```
 
 
+## Local Quality Gates
+
+Before deployment or containerization, verify the service locally with:
+
+```bash
+npm run build
+npm run smoke:local
+```
+
+The smoke test expects the app to be running and checks the frontend root, `/healthz`, `/readyz`, and `/metrics`.
+
 ## Frontend Polish
 
 The frontend includes:
@@ -139,6 +151,7 @@ The frontend includes:
 | [Runbook](RUNBOOK.md) | Operational commands and deployment notes |
 | [SLOs](docs/SLO.md) | Service Level Objectives and SLIs |
 | [Observability Evidence](docs/OBSERVABILITY-EVIDENCE.md) | Portfolio evidence checklist |
+| [Local Quality Gates](docs/LOCAL-QUALITY-GATES.md) | Local build and smoke-test verification |
 
 ## Portfolio Evidence
 

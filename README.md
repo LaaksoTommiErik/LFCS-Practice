@@ -172,6 +172,7 @@ docker compose up -d --build
 | [SLOs](docs/SLO.md) | Service Level Objectives and SLIs |
 | [Observability Evidence](docs/OBSERVABILITY-EVIDENCE.md) | Portfolio evidence checklist |
 | [Local Quality Gates](docs/LOCAL-QUALITY-GATES.md) | Local build and smoke-test verification |
+| [Docker Runtime](docs/DOCKER.md) | Docker build, run, logs, healthcheck, SQLite volume, and container verification |
 
 ## Portfolio Evidence
 

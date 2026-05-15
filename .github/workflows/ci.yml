@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke:
+    name: Build, smoke test, and Docker verify
+    runs-on: ubuntu-latest
+
+    env:
+      PORT: 3000
+      SESSION_SECRET: ci-only-session-secret-not-for-production-0123456789
+      ADMIN_EMAIL: ci-admin@example.com
+      ADMIN_INITIAL_PASSWORD: ci-only-password-not-for-production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production frontend
+        run: npm run build
+
+      - name: Start app and run local smoke test
+        shell: bash
+        env:
+          NODE_ENV: production
+        run: |
+          set -euo pipefail
+
+          mkdir -p data
+
+          npm start > /tmp/lfcs-dashboard-ci.log 2>&1 &
+          APP_PID=$!
+
+          cleanup() {
+            kill "$APP_PID" 2>/dev/null || true
+            wait "$APP_PID" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000/healthz | grep -q "healthy"; then
+              echo "Application became healthy."
+              break
+            fi
+
+            if ! kill -0 "$APP_PID" 2>/dev/null; then
+              echo "Application process exited early."
+              cat /tmp/lfcs-dashboard-ci.log
+              exit 1
+            fi
+
+            echo "Waiting for application to become healthy..."
+            sleep 2
+          done
+
+          curl -fsS http://127.0.0.1:3000/healthz | grep -q "healthy"
+          curl -fsS http://127.0.0.1:3000/readyz | grep -q "ready"
+          curl -fsS http://127.0.0.1:3000/metrics | grep -q "lfcs_dashboard_http_requests_total"
+
+          BASE_URL=http://127.0.0.1:3000 npm run smoke:local
+
+      - name: Build Docker image
+        run: docker build -t lfcs-dashboard-ci:${{ github.sha }} .
+
+      - name: Start Docker container
+        run: |
+          docker run -d \
+            --name lfcs-dashboard-ci \
+            -p 3001:3000 \
+            -e NODE_ENV=production \
+            -e PORT=3000 \
+            -e SESSION_SECRET=ci-only-session-secret-not-for-production-0123456789 \
+            -e ADMIN_EMAIL=ci-admin@example.com \
+            -e ADMIN_INITIAL_PASSWORD=ci-only-password-not-for-production \
+            lfcs-dashboard-ci:${{ github.sha }}
+
+      - name: Verify Docker container endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3001/healthz | grep -q "healthy"; then
+              echo "Docker container became healthy."
+              break
+            fi
+
+            echo "Waiting for Docker container to become healthy..."
+            sleep 2
+          done
+
+          curl -fsS http://127.0.0.1:3001/healthz | grep -q "healthy"
+          curl -fsS http://127.0.0.1:3001/readyz | grep -q "ready"
+          curl -fsS http://127.0.0.1:3001/metrics | grep -q "lfcs_dashboard_http_requests_total"
+
+      - name: Show Docker logs on failure
+        if: failure()
+        run: docker logs lfcs-dashboard-ci || true
+
+      - name: Clean up Docker container
+        if: always()
+        run: docker rm -f lfcs-dashboard-ci || true

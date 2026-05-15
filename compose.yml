@@ -1,0 +1,25 @@
+services:
+  lfcs-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lfcs-dashboard:local
+    container_name: lfcs-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      SESSION_SECRET: dev-only-change-me-before-real-deployment
+    volumes:
+      - lfcs-dashboard-data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  lfcs-dashboard-data:

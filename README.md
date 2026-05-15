@@ -142,6 +142,26 @@ The frontend includes:
 - strict grading prompt copy/preview workflow
 - responsive layout for dashboard and detail views
 
+## Docker runtime
+
+The LFCS Study Dashboard includes a Docker production-style runtime.
+
+The Docker image:
+
+- builds the React frontend
+- runs the Express/Node backend
+- serves the production frontend from `dist/`
+- exposes `/healthz`, `/readyz`, and `/metrics`
+- runs as a non-root user
+- persists SQLite data through a Docker volume
+- includes a container healthcheck
+
+Build and run:
+
+```bash
+docker compose up -d --build
+```
+
 ## Documentation
 
 | Document | Purpose |

@@ -29,39 +29,67 @@ The script is stored at:
 
     docker compose run --rm -T k6 run /scripts/smoke-load.js | tee docs/evidence/phase-12/k6-smoke-load.txt
 
-## Result template
+## Observed result: Phase 12A local smoke load test
 
-Date:
+| Metric | Result |
+|---|---|
+| Total checks | 360 |
+| Checks succeeded | 360 out of 360 |
+| Checks failed | 0 out of 360 |
+| Check success rate | 100.00% |
+| HTTP request failure rate | 0.00% |
+| HTTP requests | 360 |
+| Request rate | 11.764415 requests/second |
+| Average request duration | 2.02 ms |
+| p95 request duration | 4.28 ms |
+| Max request duration | 11.57 ms |
+| Completed iterations | 90 |
+| Interrupted iterations | 0 |
 
-Environment:
+Endpoint checks:
 
-Command:
+| Endpoint | Result |
+|---|---|
+| / | Returned 2xx |
+| /login | Returned 2xx |
+| /healthz | Returned 2xx |
+| /readyz | Returned 2xx |
 
-    docker compose run --rm -T k6 run /scripts/smoke-load.js | tee docs/evidence/phase-12/k6-smoke-load.txt
+Threshold result:
 
-Summary:
+| Threshold | Result |
+|---|---|
+| checks rate greater than 0.99 | Passed |
+| http_req_failed rate less than 0.01 | Passed |
+| http_req_duration p95 less than 500 ms | Passed |
 
-- Checks:
-- HTTP request failure rate:
-- p95 latency:
-- Requests per second:
-- Notable errors:
+## Interpretation
 
-Prometheus observations:
+The LFCS Study Dashboard passed the local smoke-load test under a deliberately small controlled load.
 
-- probe_success{job="lfcs-dashboard-synthetic"}:
-- probe_duration_seconds{job="lfcs-dashboard-synthetic"}:
-- App request rate:
-- App error ratio:
-- App p95 latency:
-- CPU/memory observation:
+This is not a production capacity claim. It only proves that the service can handle low local traffic while the synthetic monitoring and Prometheus stack remain functional.
 
-Capacity note:
+The result is useful as portfolio evidence because it shows a basic operational loop:
 
-Under the current local smoke-load profile, the service passed or failed the defined thresholds. This does not represent production capacity. It is a local validation that the service can handle low controlled traffic while synthetic probes and Prometheus remain functional.
+    deploy service
+    probe service
+    generate traffic
+    observe success and latency
+    save evidence
+    document result
 
 ## Evidence files
 
-Expected evidence path:
+Raw k6 output:
 
     docs/evidence/phase-12/k6-smoke-load.txt
+
+Synthetic monitoring dashboard:
+
+    ops/grafana/dashboards/lfcs-synthetic-monitoring.json
+
+Recommended screenshots:
+
+    docs/evidence/screenshots/phase-12b-grafana-synthetic-dashboard.png
+    docs/evidence/screenshots/phase-12b-prometheus-probe-success.png
+    docs/evidence/screenshots/phase-12b-prometheus-probe-duration.png

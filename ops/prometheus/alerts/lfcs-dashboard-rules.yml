@@ -1,0 +1,42 @@
+groups:
+  - name: lfcs-dashboard.rules
+    interval: 30s
+    rules:
+      - record: lfcs_dashboard:http_requests:rate5m
+        expr: |
+          sum by (route, method, status_code) (
+            rate(lfcs_dashboard_http_requests_total{route!="/metrics"}[5m])
+          )
+
+      - record: lfcs_dashboard:http_5xx_errors:rate5m
+        expr: |
+          sum by (route, method, status_code) (
+            rate(lfcs_dashboard_http_requests_total{status_code=~"5..",route!="/metrics"}[5m])
+          )
+
+      - record: lfcs_dashboard:http_error_ratio:5m
+        expr: |
+          sum(rate(lfcs_dashboard_http_requests_total{status_code=~"5..",route!="/metrics"}[5m]))
+          /
+          sum(rate(lfcs_dashboard_http_requests_total{route!="/metrics"}[5m]))
+
+      - record: lfcs_dashboard:http_request_duration_seconds:p95_5m
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le, route) (
+              rate(lfcs_dashboard_http_request_duration_seconds_bucket{route!="/metrics"}[5m])
+            )
+          )
+
+      - record: lfcs_dashboard:process_resident_memory:mb
+        expr: |
+          lfcs_dashboard_process_resident_memory_bytes / 1024 / 1024
+
+      - record: lfcs_dashboard:nodejs_heap_used:mb
+        expr: |
+          lfcs_dashboard_nodejs_heap_size_used_bytes / 1024 / 1024
+
+      - record: lfcs_dashboard:process_cpu:rate5m
+        expr: |
+          rate(lfcs_dashboard_process_cpu_seconds_total[5m])

@@ -11,7 +11,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      SESSION_SECRET: dev-only-change-me-before-real-deployment
+      SESSION_SECRET: ${SESSION_SECRET:-dev-only-change-me-before-real-deployment}
     volumes:
       - lfcs-dashboard-data:/app/data
     healthcheck:
@@ -47,8 +47,8 @@ services:
     ports:
       - "3001:3000"
     environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - grafana-data:/var/lib/grafana

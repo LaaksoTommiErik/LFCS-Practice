@@ -176,6 +176,8 @@ docker compose up -d --build
 | [Local Quality Gates](docs/LOCAL-QUALITY-GATES.md) | Local build and smoke-test verification |
 | [Docker Runtime](docs/DOCKER.md) | Docker build, run, logs, healthcheck, SQLite volume, and container verification |
 | [Compose Operations Stack](docs/COMPOSE-OPERATIONS.md) | Local app, Prometheus, Grafana, datasource provisioning, and dashboard-as-code |
+| [Security and Secrets Policy](docs/SECURITY.md) | Security posture, secrets policy, dependency hygiene, and known limitations |
+| [Release and Change Management](docs/RELEASE.md) | PR workflow, release tags, rollback notes, and branch protection policy |
 
 ## Portfolio Evidence
 

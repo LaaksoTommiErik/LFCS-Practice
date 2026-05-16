@@ -83,7 +83,7 @@ jobs:
         run: docker build -t lfcs-dashboard-ci:${{ github.sha }} .
 
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         continue-on-error: true
         with:
           image-ref: lfcs-dashboard-ci:${{ github.sha }}

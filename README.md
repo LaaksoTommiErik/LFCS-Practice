@@ -1,5 +1,7 @@
 # LFCS Study Dashboard
 
+![CI](https://github.com/LaaksoTommiErik/LFCS-Practice/actions/workflows/ci.yml/badge.svg)
+
 A Linux / SRE / DevOps portfolio project for tracking LFCS study progress while practicing real operational engineering: authentication, persistence, health checks, readiness checks, structured logs, metrics, dashboards, SLOs, alerting, and Linux service deployment.
 
 ## Project Purpose

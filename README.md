@@ -211,3 +211,24 @@ Future phases:
 - Kubernetes
 - expanded observability
 - incident response documentation
+
+## Synthetic monitoring and load testing
+
+The local Docker Compose operations stack includes Prometheus Blackbox Exporter for synthetic endpoint checks and a k6 smoke-load test.
+
+Synthetic checks currently cover:
+
+- `/`
+- `/login`
+- `/healthz`
+- `/readyz`
+
+Load-test evidence is stored under:
+
+- `docs/evidence/phase-12/`
+
+Related docs:
+
+- `docs/SYNTHETIC-MONITORING.md`
+- `docs/runbooks/synthetic-monitoring.md`
+- `docs/performance/load-test.md`

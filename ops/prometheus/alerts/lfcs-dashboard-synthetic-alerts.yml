@@ -1,0 +1,26 @@
+groups:
+  - name: lfcs-dashboard.synthetic-alerts
+    rules:
+      - alert: LFCSDashboardSyntheticProbeFailed
+        expr: probe_success{job="lfcs-dashboard-synthetic"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: lfcs-dashboard
+          signal: synthetic
+        annotations:
+          summary: "LFCS Dashboard synthetic probe failed"
+          description: "Blackbox synthetic probe failed for {{ $labels.instance }} for at least 2 minutes."
+          runbook_url: "docs/runbooks/synthetic-monitoring.md#lfcsdashboardsyntheticprobefailed"
+
+      - alert: LFCSDashboardSyntheticProbeSlow
+        expr: probe_duration_seconds{job="lfcs-dashboard-synthetic"} > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: lfcs-dashboard
+          signal: synthetic
+        annotations:
+          summary: "LFCS Dashboard synthetic probe is slow"
+          description: "Blackbox synthetic probe duration for {{ $labels.instance }} has been above 1 second for at least 5 minutes."
+          runbook_url: "docs/runbooks/synthetic-monitoring.md#lfcsdashboardsyntheticprobeslow"

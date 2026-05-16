@@ -78,3 +78,30 @@ These are local synthetic checks inside the Docker Compose network.
 They do not prove public internet reachability yet.
 
 Public URL synthetic monitoring belongs after AWS, DNS, and TLS are implemented.
+
+## Grafana dashboard
+
+A provisioned Grafana dashboard for local synthetic monitoring is stored at:
+
+    ops/grafana/dashboards/lfcs-synthetic-monitoring.json
+
+Dashboard title:
+
+    LFCS Synthetic Monitoring
+
+Dashboard UID:
+
+    lfcs-synthetic-monitoring
+
+The dashboard shows:
+
+- overall synthetic availability
+- failed synthetic target count
+- max probe duration
+- configured synthetic target count
+- probe success by endpoint
+- probe duration by endpoint
+
+The dashboard uses the provisioned Prometheus datasource UID:
+
+    prometheus

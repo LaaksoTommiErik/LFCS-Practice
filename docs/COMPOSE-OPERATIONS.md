@@ -498,3 +498,66 @@ No TLS is configured
 No external secret manager is used
 No backup/restore workflow is implemented yet
 ```
+
+## Troubleshooting: Host port already in use
+
+Docker Compose may fail if another host process or old container is already using a required port.
+
+Common errors:
+
+    failed to bind host port 0.0.0.0:9090/tcp: address already in use
+    failed to bind host port 0.0.0.0:3001/tcp: address already in use
+
+Common LFCS Dashboard ports:
+
+| Port | Service |
+|---|---|
+| 3000 | LFCS Dashboard app |
+| 3001 | Grafana |
+| 9090 | Prometheus |
+| 9115 | Blackbox Exporter |
+| 5432 | PostgreSQL |
+
+Find the process using a port:
+
+    sudo ss -ltnp 'sport = :9090'
+    sudo ss -ltnp 'sport = :3001'
+
+Check Docker containers using a port:
+
+    docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep 9090 || true
+    docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep 3001 || true
+
+If the conflict is a systemd service:
+
+    sudo systemctl stop prometheus
+    sudo systemctl disable prometheus
+
+    sudo systemctl stop grafana-server
+    sudo systemctl disable grafana-server
+
+If the conflict is an old Docker container:
+
+    docker rm -f <container-name-or-id>
+
+Clean the failed Compose attempt:
+
+    docker compose down
+
+Restart the stack:
+
+    docker compose up -d --build
+    docker compose ps
+
+Verify expected endpoints:
+
+    curl -fsS http://127.0.0.1:3000/healthz
+    curl -fsS http://127.0.0.1:3000/readyz
+    curl -fsS http://127.0.0.1:9090/-/ready
+    curl -fsS http://127.0.0.1:3001/api/health
+
+Important note:
+
+Inside Docker Compose, services communicate through service names such as `postgres`, `prometheus`, and `grafana`. Host port conflicts only affect access from the host machine into containers. They do not mean the application code is broken.
+
+

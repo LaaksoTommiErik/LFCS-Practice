@@ -239,3 +239,23 @@ Related docs:
 - Host local development should typically use a localhost `DATABASE_URL` (for example `postgresql://USER:PASS@127.0.0.1:5432/DBNAME`).
 - Docker Compose app containers should use the Compose service hostname (`postgres`) in `DATABASE_URL` (for example `postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard`).
 - Inside a container, `127.0.0.1` points to that same container, not the Postgres service.
+
+## Create a local admin user
+
+The app does not include a hardcoded default admin account.
+
+A local admin user is created with:
+
+    ADMIN_EMAIL
+    ADMIN_INITIAL_PASSWORD
+
+For Docker Compose, create an admin user inside the running app container:
+
+    docker compose exec \
+      -e ADMIN_EMAIL="admin@example.com" \
+      -e ADMIN_INITIAL_PASSWORD="change-this-local-password" \
+      lfcs-dashboard npm run create-admin-user
+
+Then log in with the email and password used in that command.
+
+If the email already exists, the script will not reset the password. Use a different email, or add a proper password reset/admin maintenance script later.

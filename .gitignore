@@ -4,3 +4,6 @@ data/
 dist/
 *.log
 .DS_Store
+# PostgreSQL local backup dumps
+backups/postgres/*
+!backups/postgres/.gitkeep

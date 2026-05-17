@@ -37,7 +37,7 @@ jobs:
       SESSION_SECRET: ci-only-session-secret-not-for-production-0123456789
       ADMIN_EMAIL: ci-admin@example.com
       ADMIN_INITIAL_PASSWORD: ci-only-password-not-for-production
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lfcs_dashboard_ci
+      HOST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lfcs_dashboard_ci
 
     steps:
       - name: Checkout repository
@@ -59,6 +59,7 @@ jobs:
         shell: bash
         env:
           NODE_ENV: production
+          DATABASE_URL: ${{ env.HOST_DATABASE_URL }}
         run: |
           set -euo pipefail
 
@@ -122,6 +123,7 @@ jobs:
         run: |
           set -euo pipefail
 
+          DATABASE_URL=postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard \
           LFCS_DASHBOARD_PORT=3001 docker compose up -d --build
 
           for i in {1..40}; do

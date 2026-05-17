@@ -23,7 +23,7 @@ See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 |---|---|
 | React / Vite frontend | Implemented |
 | Express / Node backend | Implemented |
-| SQLite persistence | Implemented |
+| PostgreSQL persistence | Implemented |
 | Session authentication | Implemented |
 | CSRF protection | Implemented |
 | Argon2id password hashing | Implemented |
@@ -46,8 +46,8 @@ See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 |---|---|
 | Frontend | React, Vite |
 | Backend | Node.js, Express |
-| Database | SQLite, better-sqlite3 |
-| Authentication | express-session, SQLite session store, CSRF protection |
+| Database | PostgreSQL, pg |
+| Authentication | express-session, PostgreSQL session store, CSRF protection |
 | Security | Helmet, rate limiting, Argon2id password hashing |
 | Linux operations | Ubuntu, systemd, Nginx |
 | Observability | structured logs, Prometheus, Grafana, SLOs, alert rules |
@@ -74,7 +74,7 @@ npm start
 | Endpoint | Purpose |
 |---|---|
 | `/healthz` | Process-level health check |
-| `/readyz` | Readiness check including SQLite |
+| `/readyz` | Readiness check including PostgreSQL query |
 | `/metrics` | Prometheus metrics |
 | `/api/csrf-token` | CSRF token |
 | `/api/login` | Login |
@@ -155,7 +155,7 @@ The Docker image:
 - serves the production frontend from `dist/`
 - exposes `/healthz`, `/readyz`, and `/metrics`
 - runs as a non-root user
-- persists SQLite data through a Docker volume
+- persists PostgreSQL data through a Docker volume
 - includes a container healthcheck
 
 Build and run:
@@ -174,7 +174,7 @@ docker compose up -d --build
 | [SLOs](docs/SLO.md) | Service Level Objectives and SLIs |
 | [Observability Evidence](docs/OBSERVABILITY-EVIDENCE.md) | Portfolio evidence checklist |
 | [Local Quality Gates](docs/LOCAL-QUALITY-GATES.md) | Local build and smoke-test verification |
-| [Docker Runtime](docs/DOCKER.md) | Docker build, run, logs, healthcheck, SQLite volume, and container verification |
+| [Docker Runtime](docs/DOCKER.md) | Docker build, run, logs, healthcheck, PostgreSQL volume, and container verification |
 | [Compose Operations Stack](docs/COMPOSE-OPERATIONS.md) | Local app, Prometheus, Grafana, datasource provisioning, and dashboard-as-code |
 | [Security and Secrets Policy](docs/SECURITY.md) | Security posture, secrets policy, dependency hygiene, and known limitations |
 | [Release and Change Management](docs/RELEASE.md) | PR workflow, release tags, rollback notes, and branch protection policy |
@@ -232,3 +232,10 @@ Related docs:
 - `docs/SYNTHETIC-MONITORING.md`
 - `docs/runbooks/synthetic-monitoring.md`
 - `docs/performance/load-test.md`
+
+
+### PostgreSQL connection note
+
+- Host local development should typically use a localhost `DATABASE_URL` (for example `postgresql://USER:PASS@127.0.0.1:5432/DBNAME`).
+- Docker Compose app containers should use the Compose service hostname (`postgres`) in `DATABASE_URL` (for example `postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard`).
+- Inside a container, `127.0.0.1` points to that same container, not the Postgres service.

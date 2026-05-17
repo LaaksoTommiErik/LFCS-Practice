@@ -18,3 +18,8 @@ npm-debug.log*
 
 docs/screenshots
 coverage
+.cache
+.cache/
+docs/evidence/screenshots
+docs/evidence/screenshots/
+**/*.png

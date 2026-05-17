@@ -1,6 +1,5 @@
 import express from 'express'
 import session from 'express-session'
-import SQLiteStoreFactory from 'connect-sqlite3'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import csurf from 'csurf'
@@ -19,9 +18,6 @@ dotenv.config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const distPath = path.join(__dirname, 'dist')
-const dataPath = path.join(__dirname, 'data')
-
-fs.mkdirSync(dataPath, { recursive: true })
 
 const {
   getUserByEmail,
@@ -31,12 +27,53 @@ const {
   loadProgress,
   verifyPassword,
   checkDatabase,
+  getPool,
 } = await import('./src/server/db.js')
 
-initDb()
+await initDb()
 
 const app = express()
-const SQLiteStore = SQLiteStoreFactory(session)
+class PgSessionStore extends session.Store {
+  constructor(dbPool) {
+    super()
+    this.pool = dbPool
+  }
+
+  async get(sid, callback) {
+    try {
+      const result = await this.pool.query('SELECT sess FROM user_sessions WHERE sid = $1 AND expire >= NOW()', [sid])
+      const row = result.rows[0]
+      callback(null, row ? row.sess : null)
+    } catch (error) {
+      callback(error)
+    }
+  }
+
+  async set(sid, sess, callback) {
+    try {
+      const maxAge = sess?.cookie?.maxAge || 1000 * 60 * 60 * 8
+      const expireAt = new Date(Date.now() + maxAge)
+      await this.pool.query(`
+        INSERT INTO user_sessions (sid, sess, expire)
+        VALUES ($1, $2::jsonb, $3)
+        ON CONFLICT (sid)
+        DO UPDATE SET sess = EXCLUDED.sess, expire = EXCLUDED.expire
+      `, [sid, JSON.stringify(sess), expireAt])
+      callback(null)
+    } catch (error) {
+      callback(error)
+    }
+  }
+
+  async destroy(sid, callback) {
+    try {
+      await this.pool.query('DELETE FROM user_sessions WHERE sid = $1', [sid])
+      callback(null)
+    } catch (error) {
+      callback(error)
+    }
+  }
+}
 const port = Number(process.env.PORT || 3000)
 
 app.set('trust proxy', 1)
@@ -172,9 +209,9 @@ app.get('/healthz', (_req, res) => {
   })
 })
 
-app.get('/readyz', (_req, res) => {
+app.get('/readyz', async (_req, res) => {
   try {
-    checkDatabase()
+    await checkDatabase()
 
     res.status(200).json({
       ok: true,
@@ -215,10 +252,7 @@ app.get('/metrics', async (_req, res) => {
 
 app.use(
   session({
-    store: new SQLiteStore({
-      db: 'sessions.sqlite',
-      dir: './data',
-    }),
+    store: new PgSessionStore(getPool()),
     name: 'sid',
     secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
     resave: false,
@@ -269,7 +303,7 @@ app.post('/api/login', loginLimiter, csrfProtection, async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid input' })
     }
 
-    const user = getUserByEmail(parsed.data.email)
+    const user = await getUserByEmail(parsed.data.email)
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' })
@@ -312,25 +346,33 @@ function requireAuth(req, res, next) {
   return next()
 }
 
-app.get('/api/current-user', requireAuth, (req, res) => {
-  const user = getUserById(req.session.userId)
+app.get('/api/current-user', requireAuth, async (req, res, next) => {
+  try {
+    const user = await getUserById(req.session.userId)
 
-  if (!user) {
-    req.session.destroy(() => {})
-    return res.status(401).json({ error: 'Unauthorized' })
+    if (!user) {
+      req.session.destroy(() => {})
+      return res.status(401).json({ error: 'Unauthorized' })
+    }
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    })
+  } catch (error) {
+    next(error)
   }
-
-  res.json({
-    id: user.id,
-    email: user.email,
-    role: user.role,
-  })
 })
 
-app.get('/api/progress', requireAuth, (req, res) => {
-  res.json({
-    progress: loadProgress(req.session.userId),
-  })
+app.get('/api/progress', requireAuth, async (req, res, next) => {
+  try {
+    res.json({
+      progress: await loadProgress(req.session.userId),
+    })
+  } catch (error) {
+    next(error)
+  }
 })
 
 const progressSchema = z.object({
@@ -339,18 +381,22 @@ const progressSchema = z.object({
   evidence: z.string().max(5000).optional().default(''),
 })
 
-app.post('/api/progress', requireAuth, csrfProtection, (req, res) => {
+app.post('/api/progress', requireAuth, csrfProtection, async (req, res, next) => {
   const parsed = progressSchema.safeParse(req.body)
 
   if (!parsed.success) {
     return res.status(400).json({ error: 'Invalid input' })
   }
 
-  upsertProgress(req.session.userId, parsed.data)
+  try {
+    await upsertProgress(req.session.userId, parsed.data)
 
-  res.json({
-    ok: true,
-  })
+    res.json({
+      ok: true,
+    })
+  } catch (error) {
+    next(error)
+  }
 })
 
 app.use('/api', (_req, res) => {

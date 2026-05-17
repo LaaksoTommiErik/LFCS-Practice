@@ -1,7 +1,9 @@
 import dotenv from 'dotenv'
-import { createUser, getUserByEmail, hashPassword, initDb } from '../src/server/db.js'
 
 dotenv.config()
+
+const { createUser, getUserByEmail, hashPassword, initDb } = await import('../src/server/db.js')
+
 await initDb()
 
 const email = process.env.ADMIN_EMAIL

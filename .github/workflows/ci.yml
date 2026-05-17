@@ -64,7 +64,7 @@ jobs:
 
           mkdir -p data
 
-          npm start > /tmp/lfcs-dashboard-ci.log 2>&1 &
+          node server.js > /tmp/lfcs-dashboard-ci.log 2>&1 &
           APP_PID=$!
 
           cleanup() {
@@ -95,6 +95,16 @@ jobs:
 
           BASE_URL=http://127.0.0.1:3000 npm run smoke:local
 
+
+      - name: Ensure local app process is stopped before Compose
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          pkill -f "node server.js" || true
+          pkill -f "lfcs-dashboard-ci.log" || true
+          sleep 2
+
       - name: Build Docker image
         run: docker build -t lfcs-dashboard-ci:${{ github.sha }} .
 
@@ -112,11 +122,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          docker compose up -d --build
+          LFCS_DASHBOARD_PORT=3001 docker compose up -d --build
 
           for i in {1..40}; do
-            if curl -fsS http://127.0.0.1:3000/healthz | grep -q "healthy" && \
-               curl -fsS http://127.0.0.1:3000/readyz | grep -q "ready"; then
+            if curl -fsS http://127.0.0.1:3001/healthz | grep -q "healthy" && \
+               curl -fsS http://127.0.0.1:3001/readyz | grep -q "ready"; then
               echo "Compose app became healthy and ready."
               break
             fi
@@ -124,9 +134,9 @@ jobs:
             sleep 3
           done
 
-          curl -fsS http://127.0.0.1:3000/healthz | grep -q "healthy"
-          curl -fsS http://127.0.0.1:3000/readyz | grep -q "ready"
-          curl -fsS http://127.0.0.1:3000/metrics | grep -q "lfcs_dashboard_http_requests_total"
+          curl -fsS http://127.0.0.1:3001/healthz | grep -q "healthy"
+          curl -fsS http://127.0.0.1:3001/readyz | grep -q "ready"
+          curl -fsS http://127.0.0.1:3001/metrics | grep -q "lfcs_dashboard_http_requests_total"
 
       - name: Show Docker Compose logs on failure
         if: failure()

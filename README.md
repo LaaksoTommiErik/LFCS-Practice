@@ -296,3 +296,28 @@ Related files:
 - docs/evidence/phase-14a/alertmanager-routing-test.md
 
 This phase proves local alert delivery. It is not yet production paging through Slack, email, PagerDuty, Opsgenie, or incident.io.
+
+## Phase 14B — Incident Simulation and Postmortem Evidence
+
+The project includes a controlled local incident simulation workflow.
+
+The incident workflow proves:
+
+- controlled failure injection
+- Prometheus alert detection
+- Alertmanager notification routing
+- webhook receiver evidence
+- service recovery
+- readiness verification
+- postmortem documentation
+
+Related files:
+
+- scripts/test-incident-app-outage.sh
+- docs/runbooks/incident-response.md
+- docs/incidents/README.md
+- docs/incidents/TEMPLATE.md
+- docs/incidents/INCIDENT-001-lfcs-dashboard-outage-drill.md
+- docs/evidence/phase-14b/incident-app-outage-evidence.md
+
+This phase demonstrates incident response discipline in a local portfolio environment. It does not claim real production on-call experience.

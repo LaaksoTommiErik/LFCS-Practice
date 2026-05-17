@@ -259,3 +259,18 @@ For Docker Compose, create an admin user inside the running app container:
 Then log in with the email and password used in that command.
 
 If the email already exists, the script will not reset the password. Use a different email, or add a proper password reset/admin maintenance script later.
+
+## Phase 13 — Backup, Restore, and Rollback
+
+The PostgreSQL recovery workflow includes:
+
+- scripts/backup-postgres.sh
+- scripts/restore-postgres.sh
+- scripts/test-postgres-restore.sh
+- docs/runbooks/backup-restore.md
+- docs/runbooks/rollback.md
+- docs/evidence/phase-13/restore-test.md
+
+Backup dump files are intentionally excluded from Git because they may contain user emails, password hashes, session payloads, and progress evidence.
+
+A backup is not considered complete until restore has been tested.

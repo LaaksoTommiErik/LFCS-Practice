@@ -11,7 +11,10 @@
     "create-admin-user": "node scripts/create-admin-user.js",
     "smoke": "bash scripts/smoke-test.sh",
     "smoke:local": "bash scripts/smoke-test.sh http://127.0.0.1:3000",
-    "verify:build": "npm run build"
+    "verify:build": "npm run build",
+    "backup:postgres": "bash scripts/backup-postgres.sh",
+    "restore:postgres": "bash scripts/restore-postgres.sh",
+    "test:postgres-restore": "bash scripts/test-postgres-restore.sh"
   },
   "dependencies": {
     "argon2": "^0.41.1",

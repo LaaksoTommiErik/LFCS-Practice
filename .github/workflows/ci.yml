@@ -50,7 +50,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build production frontend
         run: npm run build
@@ -124,11 +124,11 @@ jobs:
           set -euo pipefail
 
           DATABASE_URL=postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard \
-          LFCS_DASHBOARD_PORT=3001 docker compose up -d --build
+          LFCS_DASHBOARD_PORT=3002 docker compose up -d --build
 
           for i in {1..40}; do
-            if curl -fsS http://127.0.0.1:3001/healthz | grep -q "healthy" && \
-               curl -fsS http://127.0.0.1:3001/readyz | grep -q "ready"; then
+            if curl -fsS http://127.0.0.1:3002/healthz | grep -q "healthy" && \
+               curl -fsS http://127.0.0.1:3002/readyz | grep -q "ready"; then
               echo "Compose app became healthy and ready."
               break
             fi
@@ -136,9 +136,9 @@ jobs:
             sleep 3
           done
 
-          curl -fsS http://127.0.0.1:3001/healthz | grep -q "healthy"
-          curl -fsS http://127.0.0.1:3001/readyz | grep -q "ready"
-          curl -fsS http://127.0.0.1:3001/metrics | grep -q "lfcs_dashboard_http_requests_total"
+          curl -fsS http://127.0.0.1:3002/healthz | grep -q "healthy"
+          curl -fsS http://127.0.0.1:3002/readyz | grep -q "ready"
+          curl -fsS http://127.0.0.1:3002/metrics | grep -q "lfcs_dashboard_http_requests_total"
 
       - name: Show Docker Compose logs on failure
         if: failure()

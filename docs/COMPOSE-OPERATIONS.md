@@ -559,3 +559,5 @@ Verify expected endpoints:
 Important note:
 
 Inside Docker Compose, services communicate through service names such as `postgres`, `prometheus`, and `grafana`. Host port conflicts only affect access from the host machine into containers. They do not mean the application code is broken.
+
+

@@ -1,25 +1,42 @@
-import Database from 'better-sqlite3'
 import argon2 from 'argon2'
+import { Pool } from 'pg'
 
-const db = new Database('./data/app.sqlite')
+const connectionString = process.env.DATABASE_URL
 
-export function initDb() {
-  db.exec(`
+if (!connectionString) {
+  throw new Error('DATABASE_URL is required')
+}
+
+const pool = new Pool({ connectionString })
+
+export async function initDb() {
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'user',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+  `)
+
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS user_sessions (
+      sid TEXT PRIMARY KEY,
+      sess JSONB NOT NULL,
+      expire TIMESTAMPTZ NOT NULL
+    );
+  `)
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS progress (
-      user_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       task_id TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'not started',
       evidence TEXT NOT NULL DEFAULT '',
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (user_id, task_id),
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY (user_id, task_id)
     );
   `)
 }
@@ -32,36 +49,39 @@ export async function verifyPassword(password, hash) {
   return argon2.verify(hash, password)
 }
 
-export function getUserByEmail(email) {
-  return db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase())
+export async function getUserByEmail(email) {
+  const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()])
+  return result.rows[0]
 }
 
-export function getUserById(id) {
-  return db.prepare('SELECT id, email, role FROM users WHERE id = ?').get(id)
+export async function getUserById(id) {
+  const result = await pool.query('SELECT id, email, role FROM users WHERE id = $1', [id])
+  return result.rows[0]
 }
 
-export function createUser(email, passwordHash, role = 'user') {
-  return db.prepare('INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)').run(email.toLowerCase(), passwordHash, role)
+export async function createUser(email, passwordHash, role = 'user') {
+  return pool.query('INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3)', [email.toLowerCase(), passwordHash, role])
 }
 
-export function loadProgress(userId) {
-  const rows = db.prepare('SELECT task_id, status, evidence FROM progress WHERE user_id = ?').all(userId)
-  return rows.reduce((acc, r) => {
+export async function loadProgress(userId) {
+  const result = await pool.query('SELECT task_id, status, evidence FROM progress WHERE user_id = $1', [userId])
+  return result.rows.reduce((acc, r) => {
     acc[r.task_id] = { status: r.status, evidence: r.evidence }
     return acc
   }, {})
 }
 
-
-export function upsertProgress(userId, { taskId, status, evidence }) {
-  db.prepare(`
+export async function upsertProgress(userId, { taskId, status, evidence }) {
+  await pool.query(`
     INSERT INTO progress (user_id, task_id, status, evidence, updated_at)
-    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+    VALUES ($1, $2, $3, $4, NOW())
     ON CONFLICT(user_id, task_id)
-    DO UPDATE SET status=excluded.status, evidence=excluded.evidence, updated_at=CURRENT_TIMESTAMP
-  `).run(userId, taskId, status, evidence || '')
+    DO UPDATE SET status=excluded.status, evidence=excluded.evidence, updated_at=NOW()
+  `, [userId, taskId, status, evidence || ''])
 }
 
-export function checkDatabase() {
-  return db.prepare('SELECT 1 AS ok').get()
+export async function checkDatabase() {
+  return pool.query('SELECT 1 AS ok')
 }
+
+export { pool }

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "start": "node server.js",
     "create-admin-user": "node scripts/create-admin-user.js",
-        "smoke": "bash scripts/smoke-test.sh",
+    "smoke": "bash scripts/smoke-test.sh",
     "smoke:local": "bash scripts/smoke-test.sh http://127.0.0.1:3000",
     "verify:build": "npm run build"
   },

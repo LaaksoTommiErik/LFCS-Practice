@@ -52,8 +52,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Syntax checks
+        run: |
+          node --check server.js
+          node --check src/server/db.js
+          node --check scripts/create-admin-user.js
+
       - name: Build production frontend
         run: npm run build
+
+      - name: Create admin user (host DB)
+        env:
+          DATABASE_URL: ${{ env.HOST_DATABASE_URL }}
+        run: npm run create-admin-user
 
       - name: Start app and run local smoke test
         shell: bash
@@ -124,7 +135,7 @@ jobs:
           set -euo pipefail
 
           DATABASE_URL=postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard \
-          LFCS_DASHBOARD_PORT=3002 docker compose up -d --build
+          LFCS_DASHBOARD_PORT=3002 docker compose up -d --build postgres lfcs-dashboard
 
           for i in {1..40}; do
             if curl -fsS http://127.0.0.1:3002/healthz | grep -q "healthy" && \

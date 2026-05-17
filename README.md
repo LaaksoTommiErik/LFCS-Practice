@@ -232,3 +232,10 @@ Related docs:
 - `docs/SYNTHETIC-MONITORING.md`
 - `docs/runbooks/synthetic-monitoring.md`
 - `docs/performance/load-test.md`
+
+
+### PostgreSQL connection note
+
+- Host local development should typically use a localhost `DATABASE_URL` (for example `postgresql://USER:PASS@127.0.0.1:5432/DBNAME`).
+- Docker Compose app containers should use the Compose service hostname (`postgres`) in `DATABASE_URL` (for example `postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard`).
+- Inside a container, `127.0.0.1` points to that same container, not the Postgres service.

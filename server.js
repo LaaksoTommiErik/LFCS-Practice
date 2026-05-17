@@ -27,7 +27,7 @@ const {
   loadProgress,
   verifyPassword,
   checkDatabase,
-  pool,
+  getPool,
 } = await import('./src/server/db.js')
 
 await initDb()
@@ -252,7 +252,7 @@ app.get('/metrics', async (_req, res) => {
 
 app.use(
   session({
-    store: new PgSessionStore(pool),
+    store: new PgSessionStore(getPool()),
     name: 'sid',
     secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
     resave: false,

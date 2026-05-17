@@ -2,45 +2,58 @@
 
 ![CI](https://github.com/LaaksoTommiErik/LFCS-Practice/actions/workflows/ci.yml/badge.svg)
 
-A Linux / SRE / DevOps portfolio project for tracking LFCS study progress while practicing real operational engineering: authentication, persistence, health checks, readiness checks, structured logs, metrics, dashboards, SLOs, alerting, and Linux service deployment.
+## Overview
 
-## Project Purpose
+LFCS Study Dashboard is an observability-focused DevOps portfolio project.
 
-This project is both:
+It started as a personal Linux Foundation Certified System Administrator study tracker, but has been expanded into a production-style service operations case study.
 
-1. A personal LFCS study dashboard.
-2. A portfolio artifact showing practical DevOps / Observability / SRE skills.
+The purpose is to demonstrate that a service can be:
 
-The goal is to demonstrate that the application is not only built, but also operated, verified, monitored, documented, and prepared for future cloud deployment.
+- built
+- containerized
+- instrumented
+- monitored
+- alerted on
+- backed up
+- restored
+- broken intentionally
+- recovered
+- documented through runbooks and incident notes
+
+This is a local portfolio environment, not a claim of real production on-call experience.
+
+## Project Highlights
+
+- Full-stack web service built with React, Vite, Express, Node.js, and PostgreSQL.
+- Session-based authentication with CSRF protection and Argon2id password hashing.
+- PostgreSQL-backed persistence for users, sessions, and LFCS progress records.
+- Docker production-style runtime and Docker Compose operations stack.
+- Prometheus metrics, Grafana dashboards, SLO-oriented alert rules, and Blackbox synthetic monitoring.
+- Alertmanager notification routing to a local webhook receiver with generated alert-delivery evidence.
+- Tested PostgreSQL backup and restore workflow with destructive restore verification.
+- Controlled incident simulation with Prometheus detection, Alertmanager delivery, service recovery, and postmortem documentation.
+- GitHub Actions CI for build, smoke testing, PostgreSQL-backed verification, Docker validation, and security scanning.
+- Operational documentation including runbooks, SLOs, release notes, evidence files, and incident reports.
+
+## Why This Project Exists
+
+Most beginner projects stop at application functionality.
+
+This project focuses on the operational layer around the application:
+
+- Can the service start reliably?
+- Can the service expose health and readiness?
+- Can Prometheus scrape useful metrics?
+- Can dashboards show service behavior?
+- Can alerts detect failure?
+- Can Alertmanager route notifications?
+- Can data be backed up and restored?
+- Can an incident be detected, mitigated, verified, and documented?
+
+The goal is to build evidence for junior Observability Engineer, DevOps Engineer, Cloud Operations, and SRE-adjacent roles.
 
 ## Current Architecture
-
-See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-
-## Current Capabilities
-
-| Area | Status |
-|---|---|
-| React / Vite frontend | Implemented |
-| Express / Node backend | Implemented |
-| PostgreSQL persistence | Implemented |
-| Session authentication | Implemented |
-| CSRF protection | Implemented |
-| Argon2id password hashing | Implemented |
-| Admin bootstrap script | Implemented |
-| `/healthz` health endpoint | Implemented |
-| `/readyz` readiness endpoint | Implemented |
-| Production frontend serving from Express | Implemented |
-| Ubuntu systemd deployment | Implemented |
-| Nginx reverse proxy | Implemented |
-| Structured JSON logs | Implemented |
-| Prometheus `/metrics` endpoint | Implemented |
-| Grafana dashboarding | Started |
-| SLO documentation | Started |
-| Prometheus alert rules | Started |
-| Local quality gates | Started |
-
-## Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -48,206 +61,206 @@ See: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 | Backend | Node.js, Express |
 | Database | PostgreSQL, pg |
 | Authentication | express-session, PostgreSQL session store, CSRF protection |
-| Security | Helmet, rate limiting, Argon2id password hashing |
-| Linux operations | Ubuntu, systemd, Nginx |
-| Observability | structured logs, Prometheus, Grafana, SLOs, alert rules |
+| Password security | Argon2id |
+| Container runtime | Docker |
+| Local operations stack | Docker Compose |
+| Metrics | Prometheus, prom-client |
+| Dashboards | Grafana |
+| Synthetic monitoring | Prometheus Blackbox Exporter |
+| Alert routing | Alertmanager |
+| Alert evidence receiver | Local Node.js webhook receiver |
+| Load testing | k6 smoke-load test |
+| CI/CD evidence | GitHub Actions |
+| Linux deployment evidence | Ubuntu, systemd, Nginx |
+| Documentation | Runbooks, SLOs, incident notes, evidence files |
 
-## Local Development
+See the full architecture document:
 
-```bash
-cp .env.example .env
-npm install
-npm run create-admin-user
-npm run dev
-```
+    docs/ARCHITECTURE.md
 
-## Production-Style Local Run
+## Operations Stack
 
-```bash
-npm install
-npm run build
-npm start
-```
+The local Docker Compose stack includes:
+
+| Service | Purpose |
+|---|---|
+| lfcs-dashboard | Express/Node application serving the React production build |
+| postgres | PostgreSQL database for users, sessions, and progress |
+| prometheus | Metrics scraping and alert rule evaluation |
+| grafana | Dashboards and visualization |
+| blackbox | Synthetic endpoint checks |
+| alertmanager | Alert grouping, routing, and notification dispatch |
+| alert-webhook | Local webhook receiver for Alertmanager evidence |
+| k6 | Local smoke-load testing |
+
+Start the stack:
+
+    docker compose up -d --build
+
+Use an alternate app host port when local port 3000 is already in use:
+
+    LFCS_DASHBOARD_PORT=3002 docker compose up -d --build
 
 ## Operational Endpoints
 
 | Endpoint | Purpose |
 |---|---|
-| `/healthz` | Process-level health check |
-| `/readyz` | Readiness check including PostgreSQL query |
-| `/metrics` | Prometheus metrics |
-| `/api/csrf-token` | CSRF token |
-| `/api/login` | Login |
-| `/api/logout` | Logout |
-| `/api/current-user` | Current authenticated user |
-| `/api/progress` | User progress persistence |
+| /healthz | Process-level health check |
+| /readyz | Readiness check including PostgreSQL query |
+| /metrics | Prometheus metrics |
+| /api/csrf-token | CSRF token |
+| /api/login | Login |
+| /api/logout | Logout |
+| /api/current-user | Current authenticated user |
+| /api/progress | User progress persistence |
 
-## Verification
+Example checks:
 
-When running directly on Express:
+    curl -fsS http://127.0.0.1:3002/healthz
+    curl -fsS http://127.0.0.1:3002/readyz
+    curl -fsS http://127.0.0.1:3002/metrics | head
 
-```bash
-curl http://127.0.0.1:3000/healthz
-curl http://127.0.0.1:3000/readyz
-curl http://127.0.0.1:3000/metrics | head
-```
+## Observability Capabilities
 
-When running behind Nginx:
+| Capability | Status | Evidence |
+|---|---|---|
+| Structured JSON request logs | Implemented | RUNBOOK.md |
+| Prometheus /metrics endpoint | Implemented | docs/OBSERVABILITY-EVIDENCE.md |
+| Grafana dashboarding | Implemented | ops/grafana/ |
+| SLO documentation | Implemented | docs/SLO.md |
+| Prometheus alert rules | Implemented | ops/prometheus/alerts/ |
+| Synthetic monitoring | Implemented | docs/SYNTHETIC-MONITORING.md |
+| Alertmanager routing | Implemented | docs/evidence/phase-14a/alertmanager-routing-test.md |
+| Incident simulation | Implemented | docs/incidents/INCIDENT-001-lfcs-dashboard-outage-drill.md |
+| Backup and restore testing | Implemented | docs/evidence/phase-13/restore-test.md |
 
-```bash
-curl http://127.0.0.1/healthz
-curl http://127.0.0.1/readyz
-```
+## Reliability and Recovery
 
-Expected `/healthz` result:
+The project includes a tested PostgreSQL recovery workflow.
 
-```json
-{
-  "ok": true,
-  "service": "lfcs-study-dashboard",
-  "status": "healthy"
-}
-```
+Backup script:
 
-Expected `/readyz` result:
+    scripts/backup-postgres.sh
 
-```json
-{
-  "ok": true,
-  "service": "lfcs-study-dashboard",
-  "status": "ready",
-  "checks": {
-    "database": "ok"
-  }
-}
-```
+Restore script:
 
+    scripts/restore-postgres.sh
 
-## Local Quality Gates
+Automated restore test:
 
-Before deployment or containerization, verify the service locally with:
+    npm run test:postgres-restore
 
-```bash
-npm run build
-npm run smoke:local
-```
+The restore test proves:
 
-The smoke test expects the app to be running and checks the frontend root, `/healthz`, `/readyz`, and `/metrics`.
+- marker data exists before backup
+- backup file is created
+- marker data is deleted
+- restore is executed
+- required PostgreSQL tables exist after restore
+- /readyz returns ready after restore
+- deleted marker data returns after restore
 
-## Frontend Polish
+Recovery documentation:
 
-The frontend includes:
-- top navigation
-- dashboard summary with progress score
-- status badges and operational links
-- task detail panels with evidence capture
-- strict grading prompt copy/preview workflow
-- responsive layout for dashboard and detail views
+    docs/runbooks/backup-restore.md
+    docs/runbooks/rollback.md
+    docs/evidence/phase-13/restore-test.md
 
-## Docker runtime
+## Alerting and Incident Response
 
-The LFCS Study Dashboard includes a Docker production-style runtime.
+The project includes local Alertmanager routing.
 
-The Docker image:
+Alert path:
 
-- builds the React frontend
-- runs the Express/Node backend
-- serves the production frontend from `dist/`
-- exposes `/healthz`, `/readyz`, and `/metrics`
-- runs as a non-root user
-- persists PostgreSQL data through a Docker volume
-- includes a container healthcheck
+    Prometheus alert rule
+    -> Alertmanager
+    -> local webhook receiver
+    -> evidence file
 
-Build and run:
+Alertmanager verification:
 
-```bash
-docker compose up -d --build
-```
+    npm run test:alertmanager-routing
 
-## Documentation
+Incident drill:
+
+    npm run test:incident-app-outage
+
+The incident drill proves:
+
+- controlled service outage
+- Prometheus detects LFCSDashboardDown
+- Alertmanager routes the alert
+- webhook receiver records the alert
+- service is restarted
+- /readyz returns ready after recovery
+- postmortem is generated
+
+Incident documentation:
+
+    docs/runbooks/incident-response.md
+    docs/incidents/README.md
+    docs/incidents/INCIDENT-001-lfcs-dashboard-outage-drill.md
+    docs/evidence/phase-14b/incident-app-outage-evidence.md
+
+## Verification Commands
+
+Core local checks:
+
+    npm run build
+    npm run smoke:local
+
+Operational drills:
+
+    npm run test:postgres-restore
+    npm run test:alertmanager-routing
+    npm run test:incident-app-outage
+
+Docker Compose validation:
+
+    docker compose -f compose.yml config
+
+Prometheus and Alertmanager checks:
+
+    curl -fsS http://127.0.0.1:9090/api/v1/alerts
+    curl -fsS http://127.0.0.1:9090/api/v1/alertmanagers
+    curl -fsS http://127.0.0.1:9093/-/ready
+    curl -fsS http://127.0.0.1:9094/healthz
+    curl -fsS http://127.0.0.1:9094/events
+
+## Documentation Index
 
 | Document | Purpose |
 |---|---|
-| [Architecture](docs/ARCHITECTURE.md) | Current system architecture |
-| [Baseline Audit](docs/BASELINE-AUDIT.md) | Current project state before Docker, AWS, Terraform, and Kubernetes |
-| [Runbook](RUNBOOK.md) | Operational commands and deployment notes |
-| [SLOs](docs/SLO.md) | Service Level Objectives and SLIs |
-| [Observability Evidence](docs/OBSERVABILITY-EVIDENCE.md) | Portfolio evidence checklist |
-| [Local Quality Gates](docs/LOCAL-QUALITY-GATES.md) | Local build and smoke-test verification |
-| [Docker Runtime](docs/DOCKER.md) | Docker build, run, logs, healthcheck, PostgreSQL volume, and container verification |
-| [Compose Operations Stack](docs/COMPOSE-OPERATIONS.md) | Local app, Prometheus, Grafana, datasource provisioning, and dashboard-as-code |
-| [Security and Secrets Policy](docs/SECURITY.md) | Security posture, secrets policy, dependency hygiene, and known limitations |
-| [Release and Change Management](docs/RELEASE.md) | PR workflow, release tags, rollback notes, and branch protection policy |
+| docs/ARCHITECTURE.md | Current architecture |
+| RUNBOOK.md | General operational runbook |
+| docs/COMPOSE-OPERATIONS.md | Docker Compose operations stack |
+| docs/DOCKER.md | Docker runtime documentation |
+| docs/SLO.md | Service Level Objectives and SLIs |
+| docs/SYNTHETIC-MONITORING.md | Blackbox synthetic monitoring |
+| docs/runbooks/alertmanager-routing.md | Alertmanager routing runbook |
+| docs/runbooks/incident-response.md | Incident response workflow |
+| docs/runbooks/backup-restore.md | PostgreSQL backup and restore |
+| docs/runbooks/rollback.md | Code and data rollback |
+| docs/incidents/README.md | Incident index |
+| docs/incidents/INCIDENT-001-lfcs-dashboard-outage-drill.md | Controlled outage postmortem |
+| docs/OBSERVABILITY-EVIDENCE.md | Observability evidence index |
+| docs/LOCAL-QUALITY-GATES.md | Local quality gates |
+| docs/SECURITY.md | Security and secrets policy |
+| docs/RELEASE.md | Release and change management |
 
-## Portfolio Evidence
+## Evidence Highlights
 
-See: [docs/OBSERVABILITY-EVIDENCE.md](docs/OBSERVABILITY-EVIDENCE.md)
+| Evidence | File |
+|---|---|
+| PostgreSQL backup and restore test | docs/evidence/phase-13/restore-test.md |
+| Alertmanager routing test | docs/evidence/phase-14a/alertmanager-routing-test.md |
+| Incident outage drill evidence | docs/evidence/phase-14b/incident-app-outage-evidence.md |
+| Load-test evidence | docs/evidence/phase-12/ |
+| Observability evidence checklist | docs/OBSERVABILITY-EVIDENCE.md |
 
-Evidence currently focuses on:
-
-- health checks
-- readiness checks
-- systemd service status
-- Nginx reverse proxy
-- structured JSON logs
-- Prometheus metrics
-- Grafana dashboards
-- SLO and alert documentation
-
-## Roadmap
-
-Current phase:
-
-- clean baseline documentation
-- make current architecture explainable
-- repair observability and SLO documentation
-- consolidate runbook documentation
-
-Future phases:
-
-- Docker
-- AWS deployment
-- Terraform
-- Kubernetes
-- expanded observability
-- incident response documentation
-
-## Synthetic monitoring and load testing
-
-The local Docker Compose operations stack includes Prometheus Blackbox Exporter for synthetic endpoint checks and a k6 smoke-load test.
-
-Synthetic checks currently cover:
-
-- `/`
-- `/login`
-- `/healthz`
-- `/readyz`
-
-Load-test evidence is stored under:
-
-- `docs/evidence/phase-12/`
-
-Related docs:
-
-- `docs/SYNTHETIC-MONITORING.md`
-- `docs/runbooks/synthetic-monitoring.md`
-- `docs/performance/load-test.md`
-
-
-### PostgreSQL connection note
-
-- Host local development should typically use a localhost `DATABASE_URL` (for example `postgresql://USER:PASS@127.0.0.1:5432/DBNAME`).
-- Docker Compose app containers should use the Compose service hostname (`postgres`) in `DATABASE_URL` (for example `postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard`).
-- Inside a container, `127.0.0.1` points to that same container, not the Postgres service.
-
-## Create a local admin user
+## Local Admin User
 
 The app does not include a hardcoded default admin account.
-
-A local admin user is created with:
-
-    ADMIN_EMAIL
-    ADMIN_INITIAL_PASSWORD
 
 For Docker Compose, create an admin user inside the running app container:
 
@@ -256,68 +269,59 @@ For Docker Compose, create an admin user inside the running app container:
       -e ADMIN_INITIAL_PASSWORD="change-this-local-password" \
       lfcs-dashboard npm run create-admin-user
 
-Then log in with the email and password used in that command.
+If the email already exists, the script will not reset the password. Use a different email or add a proper password reset/admin maintenance script later.
 
-If the email already exists, the script will not reset the password. Use a different email, or add a proper password reset/admin maintenance script later.
+## PostgreSQL Connection Note
 
-## Phase 13 — Backup, Restore, and Rollback
+Host local development should typically use a localhost DATABASE_URL:
 
-The PostgreSQL recovery workflow includes:
+    postgresql://USER:PASS@127.0.0.1:5432/DBNAME
 
-- scripts/backup-postgres.sh
-- scripts/restore-postgres.sh
-- scripts/test-postgres-restore.sh
-- docs/runbooks/backup-restore.md
-- docs/runbooks/rollback.md
-- docs/evidence/phase-13/restore-test.md
+Docker Compose app containers should use the Compose service hostname:
 
-Backup dump files are intentionally excluded from Git because they may contain user emails, password hashes, session payloads, and progress evidence.
+    postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard
 
-A backup is not considered complete until restore has been tested.
+Inside a container, 127.0.0.1 points to that same container, not the PostgreSQL service.
 
-## Phase 14A — Alertmanager Notification Routing
+## Current Limitations
 
-The local observability stack now includes Alertmanager notification routing.
+This is a local portfolio environment.
 
-The alerting path is:
+Current limitations:
 
-- Prometheus evaluates alert rules
-- Prometheus sends firing/resolved alerts to Alertmanager
-- Alertmanager groups and routes alerts
-- a local webhook receiver records notifications
-- evidence is generated under docs/evidence/phase-14a/
+- no real production users
+- no real production on-call rotation
+- no Kubernetes deployment yet
+- no cloud deployment yet
+- no Terraform-managed infrastructure yet
+- no distributed tracing pipeline yet
+- no centralized log backend such as Loki or Elasticsearch yet
+- no external notification integration such as Slack, PagerDuty, Opsgenie, or incident.io yet
+- local secrets and example credentials are for development only
 
-Related files:
+These are known gaps, not hidden claims.
 
-- ops/alertmanager/alertmanager.yml
-- ops/alertmanager/webhook-receiver.js
-- scripts/test-alertmanager-routing.sh
-- docs/runbooks/alertmanager-routing.md
-- docs/evidence/phase-14a/alertmanager-routing-test.md
+## Roadmap
 
-This phase proves local alert delivery. It is not yet production paging through Slack, email, PagerDuty, Opsgenie, or incident.io.
+High-value next improvements:
 
-## Phase 14B — Incident Simulation and Postmortem Evidence
+1. Add a database-readiness incident drill where /healthz stays healthy but /readyz fails.
+2. Add Loki or another log aggregation path.
+3. Add basic OpenTelemetry tracing.
+4. Add Kubernetes monitoring basics.
+5. Deploy the service to AWS with Terraform-managed infrastructure.
+6. Add external notification routing later, such as Slack or PagerDuty-style integration.
 
-The project includes a controlled local incident simulation workflow.
+## Portfolio Framing
 
-The incident workflow proves:
+This repository is best understood as a practical operations case study.
 
-- controlled failure injection
-- Prometheus alert detection
-- Alertmanager notification routing
-- webhook receiver evidence
-- service recovery
-- readiness verification
-- postmortem documentation
+It demonstrates preparation for junior roles involving:
 
-Related files:
+- observability
+- DevOps
+- cloud operations
+- platform engineering
+- SRE-adjacent work
 
-- scripts/test-incident-app-outage.sh
-- docs/runbooks/incident-response.md
-- docs/incidents/README.md
-- docs/incidents/TEMPLATE.md
-- docs/incidents/INCIDENT-001-lfcs-dashboard-outage-drill.md
-- docs/evidence/phase-14b/incident-app-outage-evidence.md
-
-This phase demonstrates incident response discipline in a local portfolio environment. It does not claim real production on-call experience.
+It does not claim professional production experience. It shows structured, reproducible, hands-on preparation for that environment.

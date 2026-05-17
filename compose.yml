@@ -50,6 +50,45 @@ services:
     command:
       - "--config.file=/etc/blackbox_exporter/config.yml"
 
+  alert-webhook:
+    image: node:22-bookworm-slim
+    container_name: lfcs-alert-webhook
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "9094:8080"
+    volumes:
+      - ./ops/alertmanager/webhook-receiver.js:/app/webhook-receiver.js:ro
+      - alertmanager-webhook-data:/data
+    command:
+      - node
+      - /app/webhook-receiver.js
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8080/healthz').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  alertmanager:
+    image: prom/alertmanager:v0.32.1
+    container_name: lfcs-alertmanager
+    restart: unless-stopped
+    depends_on:
+      alert-webhook:
+        condition: service_healthy
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./ops/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+
   prometheus:
     image: prom/prometheus:v2.55.1
     container_name: lfcs-prometheus
@@ -58,6 +97,8 @@ services:
       lfcs-dashboard:
         condition: service_healthy
       blackbox:
+        condition: service_started
+      alertmanager:
         condition: service_started
     ports:
       - "9090:9090"
@@ -105,3 +146,5 @@ volumes:
   postgres-data:
   prometheus-data:
   grafana-data:
+  alertmanager-data:
+  alertmanager-webhook-data:

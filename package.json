@@ -14,7 +14,8 @@
     "verify:build": "npm run build",
     "backup:postgres": "bash scripts/backup-postgres.sh",
     "restore:postgres": "bash scripts/restore-postgres.sh",
-    "test:postgres-restore": "bash scripts/test-postgres-restore.sh"
+    "test:postgres-restore": "bash scripts/test-postgres-restore.sh",
+    "test:alertmanager-routing": "bash scripts/test-alertmanager-routing.sh"
   },
   "dependencies": {
     "argon2": "^0.41.1",

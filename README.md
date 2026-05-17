@@ -274,3 +274,25 @@ The PostgreSQL recovery workflow includes:
 Backup dump files are intentionally excluded from Git because they may contain user emails, password hashes, session payloads, and progress evidence.
 
 A backup is not considered complete until restore has been tested.
+
+## Phase 14A — Alertmanager Notification Routing
+
+The local observability stack now includes Alertmanager notification routing.
+
+The alerting path is:
+
+- Prometheus evaluates alert rules
+- Prometheus sends firing/resolved alerts to Alertmanager
+- Alertmanager groups and routes alerts
+- a local webhook receiver records notifications
+- evidence is generated under docs/evidence/phase-14a/
+
+Related files:
+
+- ops/alertmanager/alertmanager.yml
+- ops/alertmanager/webhook-receiver.js
+- scripts/test-alertmanager-routing.sh
+- docs/runbooks/alertmanager-routing.md
+- docs/evidence/phase-14a/alertmanager-routing-test.md
+
+This phase proves local alert delivery. It is not yet production paging through Slack, email, PagerDuty, Opsgenie, or incident.io.

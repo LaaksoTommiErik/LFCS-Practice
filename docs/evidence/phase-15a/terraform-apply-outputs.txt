@@ -1,0 +1,6 @@
+healthz_url = "http://13.50.225.65/healthz"
+instance_id = "i-092d3de8032fd1b23"
+public_dns = "ec2-13-50-225-65.eu-north-1.compute.amazonaws.com"
+public_ip = "13.50.225.65"
+readyz_url = "http://13.50.225.65/readyz"
+ssh_command = "ssh -i ~/.ssh/lfcs_aws_ed25519 ubuntu@13.50.225.65"

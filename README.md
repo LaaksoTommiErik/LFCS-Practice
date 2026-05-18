@@ -21,7 +21,7 @@ The purpose is to demonstrate that a service can be:
 - recovered
 - documented through runbooks and incident notes
 
-This is a local portfolio environment, not a claim of real production on-call experience.
+This is a portfolio environment with local and AWS baseline deployment evidence, not a claim of real production on-call experience.
 
 ## Project Highlights
 
@@ -327,7 +327,7 @@ Inside a container, 127.0.0.1 points to that same container, not the PostgreSQL 
 
 ## Current Limitations
 
-This is a local portfolio environment.
+This is a portfolio environment, not a production service with real users or on-call obligations.
 
 Current limitations:
 

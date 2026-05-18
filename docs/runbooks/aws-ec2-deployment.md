@@ -120,6 +120,18 @@ The stack is started with:
 
     sudo docker compose --env-file .env up -d --build
 
+Minimal EC2 `.env` example:
+
+    NODE_ENV=production
+    LFCS_DASHBOARD_PORT=80
+    ENABLE_HTTPS=false
+    DATABASE_URL=postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard
+    SESSION_SECRET=<generated-secret>
+    GRAFANA_ADMIN_USER=admin
+    GRAFANA_ADMIN_PASSWORD=<generated-secret>
+
+`ENABLE_HTTPS=false` is required for the raw HTTP EC2 baseline. If HTTPS/TLS is added later, set `ENABLE_HTTPS=true` so HTTPS-specific security headers can be enabled safely.
+
 Check services:
 
     sudo docker compose --env-file .env ps

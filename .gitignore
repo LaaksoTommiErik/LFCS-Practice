@@ -24,3 +24,6 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+
+# Local Kubernetes secrets
+k8s/local/secret.yaml

@@ -30,6 +30,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      ENABLE_HTTPS: ${ENABLE_HTTPS:-false}
       DATABASE_URL: ${DATABASE_URL:-postgresql://lfcs:lfcs@postgres:5432/lfcs_dashboard}
       SESSION_SECRET: ${SESSION_SECRET:-dev-only-change-me-before-real-deployment}
     healthcheck:

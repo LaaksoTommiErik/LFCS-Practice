@@ -181,7 +181,21 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(helmet())
+const enableHttpsSecurityHeaders = process.env.ENABLE_HTTPS === 'true'
+
+const helmetOptions = {
+  contentSecurityPolicy: {
+    directives: {
+      'upgrade-insecure-requests': enableHttpsSecurityHeaders ? [] : null,
+    },
+  },
+}
+
+if (!enableHttpsSecurityHeaders) {
+  helmetOptions.strictTransportSecurity = false
+}
+
+app.use(helmet(helmetOptions))
 app.use(cors({
   origin: process.env.APP_ORIGIN || 'http://localhost:5173',
   credentials: true,

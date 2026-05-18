@@ -34,6 +34,7 @@ This is a local portfolio environment, not a claim of real production on-call ex
 - Tested PostgreSQL backup and restore workflow with destructive restore verification.
 - Controlled incident simulation with Prometheus detection, Alertmanager delivery, service recovery, and postmortem documentation.
 - GitHub Actions CI for build, smoke testing, PostgreSQL-backed verification, Docker validation, and security scanning.
+- Terraform-managed AWS EC2 baseline deployment with Docker Compose, public health/readiness verification, EC2-local observability checks, and documented teardown.
 - Operational documentation including runbooks, SLOs, release notes, evidence files, and incident reports.
 
 ## Why This Project Exists
@@ -71,6 +72,8 @@ The goal is to build evidence for junior Observability Engineer, DevOps Engineer
 | Alert evidence receiver | Local Node.js webhook receiver |
 | Load testing | k6 smoke-load test |
 | CI/CD evidence | GitHub Actions |
+| Cloud baseline | AWS EC2 |
+| Infrastructure as Code | Terraform |
 | Linux deployment evidence | Ubuntu, systemd, Nginx |
 | Documentation | Runbooks, SLOs, incident notes, evidence files |
 
@@ -100,6 +103,42 @@ Start the stack:
 Use an alternate app host port when local port 3000 is already in use:
 
     LFCS_DASHBOARD_PORT=3002 docker compose up -d --build
+
+## AWS / Terraform Baseline Deployment
+
+Phase 15A added a reproducible AWS baseline deployment.
+
+The AWS baseline provisions one Ubuntu EC2 host with Terraform, installs Docker through `user_data`, deploys the existing Docker Compose stack, exposes the app through public HTTP on port 80, and verifies the observability stack from the EC2 host-local network.
+
+This is intentionally a baseline cloud deployment, not a production-grade multi-AZ AWS architecture.
+
+### What the AWS deployment proves
+
+- Terraform can provision the EC2 baseline.
+- SSH ingress is restricted to the operator public IP `/32`.
+- Public ingress is limited to HTTP port 80 for the dashboard.
+- The EC2 instance requires IMDSv2.
+- The root EBS volume is encrypted.
+- Docker is installed automatically through EC2 `user_data`.
+- The Docker Compose stack runs on the EC2 host.
+- Public `/healthz` works.
+- Public `/readyz` works and verifies PostgreSQL readiness.
+- `/metrics` works from the EC2-local path.
+- Prometheus, Grafana, Alertmanager, Blackbox Exporter, and the local alert webhook are reachable from the EC2 host.
+- Terraform teardown was executed after evidence collection.
+
+### AWS documentation and evidence
+
+| Document | Purpose |
+|---|---|
+| `infra/aws/README.md` | Terraform baseline documentation |
+| `docs/runbooks/aws-ec2-deployment.md` | AWS EC2 deployment and teardown runbook |
+| `docs/evidence/phase-15a/aws-ec2-deployment-evidence.md` | Public endpoint, Compose, metrics, observability, and security group evidence |
+| `docs/evidence/phase-15a/aws-ec2-teardown-evidence.md` | Terraform destroy evidence |
+
+### AWS scope limitations
+
+The current AWS deployment does not include DNS, TLS, ALB, RDS, ECS, EKS, S3 backups, Secrets Manager, Terraform remote state, or multi-AZ architecture. Those are intentionally left for later phases.
 
 ## Operational Endpoints
 
@@ -247,6 +286,7 @@ Prometheus and Alertmanager checks:
 | docs/LOCAL-QUALITY-GATES.md | Local quality gates |
 | docs/SECURITY.md | Security and secrets policy |
 | docs/RELEASE.md | Release and change management |
+| docs/PHASE-15B-AWS-PORTFOLIO-SUMMARY.md | Employer-facing AWS deployment summary |
 
 ## Evidence Highlights
 
@@ -257,6 +297,8 @@ Prometheus and Alertmanager checks:
 | Incident outage drill evidence | docs/evidence/phase-14b/incident-app-outage-evidence.md |
 | Load-test evidence | docs/evidence/phase-12/ |
 | Observability evidence checklist | docs/OBSERVABILITY-EVIDENCE.md |
+| AWS EC2 Terraform deployment evidence | docs/evidence/phase-15a/aws-ec2-deployment-evidence.md |
+| AWS EC2 Terraform teardown evidence | docs/evidence/phase-15a/aws-ec2-teardown-evidence.md |
 
 ## Local Admin User
 
@@ -292,8 +334,8 @@ Current limitations:
 - no real production users
 - no real production on-call rotation
 - no Kubernetes deployment yet
-- no cloud deployment yet
-- no Terraform-managed infrastructure yet
+- no DNS/TLS-backed public production URL yet
+- no production-grade AWS architecture yet
 - no distributed tracing pipeline yet
 - no centralized log backend such as Loki or Elasticsearch yet
 - no external notification integration such as Slack, PagerDuty, Opsgenie, or incident.io yet
@@ -309,7 +351,7 @@ High-value next improvements:
 2. Add Loki or another log aggregation path.
 3. Add basic OpenTelemetry tracing.
 4. Add Kubernetes monitoring basics.
-5. Deploy the service to AWS with Terraform-managed infrastructure.
+5. Add DNS/TLS and a more production-like AWS edge layer.
 6. Add external notification routing later, such as Slack or PagerDuty-style integration.
 
 ## Portfolio Framing
